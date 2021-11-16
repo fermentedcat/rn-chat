@@ -12,18 +12,20 @@ import {
   StatusBar,
   Platform,
   KeyboardAvoidingView,
-  View
+  View,
 } from 'react-native'
 import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
 
-function MessagesScreen() {
+function MessagesScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true)
   const [messages, setMessages] = useState(null)
+  const { chatId } = route.params
+  
   const fetchMessages = async () => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}chat/618ba08c5a6c805cca763e71/message`
+        `${API_BASE_URL}chat/${chatId}/message`
       )
       const data = await response.json()
       setMessages(data)
@@ -44,9 +46,7 @@ function MessagesScreen() {
           style={styles.innerContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : null}
         >
-          {isLoading && (
-            <Text style={{ padding: 50 }}>Loading...</Text>
-          )}
+          {isLoading && <Text style={{ padding: 50 }}>Loading...</Text>}
           {!isLoading && !messages && (
             <Text style={{ padding: 50 }}>Failed to fetch messages.</Text>
           )}

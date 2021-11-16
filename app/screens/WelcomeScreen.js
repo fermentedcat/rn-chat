@@ -9,15 +9,15 @@ import colors from '../styles/colors'
 
 import { pageWrapper, headingText } from '../styles/common'
 
-const handleLogin = () => {
-  console.log('login')
-}
 
-const handleRegister = () => {
-  console.log('register')
-}
-
-function WelcomeScreen(props) {
+function WelcomeScreen({ navigation }) {
+  const handleLogin = () => {
+    navigation.navigate('Chats')
+  }
+  
+  const handleRegister = () => {
+    console.log('register')
+  }
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>

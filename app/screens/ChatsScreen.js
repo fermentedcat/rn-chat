@@ -18,7 +18,7 @@ import ActionsBar from '../components/ActionsBar'
 import IconButton from '../components/IconButton'
 import Header from '../components/Header'
 
-function ChatsScreen(props) {
+function ChatsScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true)
   const [subscriptions, setSubscriptions] = useState(null)
   const userId = '618b9ea2ce54c1bbb202217d'
@@ -42,7 +42,7 @@ function ChatsScreen(props) {
   return (
     <View style={styles.pageWrapper}>
       <SafeAreaView style={styles.container}>
-        <Header title="Chats" logo >
+        <Header title="Chats" logo>
           <ActionsBar>
             <IconButton name="search" />
             <IconButton name="ellipsis-vertical" />
@@ -54,7 +54,7 @@ function ChatsScreen(props) {
             data={subscriptions}
             keyExtractor={(item) => item._id}
             style={styles.chatList}
-            renderItem={({ item }) => <ChatButton chat={item.chat} />}
+            renderItem={({ item }) => <ChatButton chat={item.chat} navigation={navigation} />}
           />
         )}
       </SafeAreaView>

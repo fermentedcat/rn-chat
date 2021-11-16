@@ -1,14 +1,18 @@
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { Text, Pressable, StyleSheet } from 'react-native'
 
 import colors from '../styles/colors'
 import theme from '../styles/theme'
 
-function ChatButton({chat}) {
+function ChatButton({chat, navigation}) {
+  const handleOnPress = () => {
+    navigation.navigate('Messages', { chatId: chat._id })
+  }
+
   return (
-    <View style={styles.chatItem}>
+    <Pressable style={styles.chatItem} onPress={handleOnPress}>
       <Text numberOfLines={1} style={styles.title}>{chat.title}</Text>
-    </View>
+    </Pressable>
   )
 }
 
