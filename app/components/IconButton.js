@@ -6,13 +6,13 @@ import colors from '../styles/colors'
 import theme from '../styles/theme'
 
 import { Ionicons } from '@expo/vector-icons'
-import { View, StyleSheet } from 'react-native'
+import { Pressable, StyleSheet } from 'react-native'
 
 function IconButton({name, onPress}) {
   return (
-    <View style={styles.iconWrapper}>
+    <Pressable style={styles.iconWrapper} onPress={onPress}>
       <Ionicons style={styles.icon} name={name} />
-    </View>
+    </Pressable>
   )
 }
 

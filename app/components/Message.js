@@ -55,7 +55,7 @@ const styles = (isByUser) =>
       borderRadius: 100,
       paddingVertical: 15,
       paddingHorizontal: 25,
-      marginVertical: 8,
+      marginVertical: 5,
       marginHorizontal: 16,
     },
     message: {

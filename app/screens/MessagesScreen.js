@@ -4,6 +4,8 @@ import { API_BASE_URL } from 'react-native-dotenv'
 
 import { pageWrapper } from '../styles/common'
 
+import colors from '../styles/colors'
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,19 +16,25 @@ import {
   KeyboardAvoidingView,
   View,
 } from 'react-native'
+
+import Header from '../components/Header'
+import ActionsBar from '../components/ActionsBar'
+import IconButton from '../components/IconButton'
 import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
 
 function MessagesScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true)
   const [messages, setMessages] = useState(null)
-  const { chatId } = route.params
-  
+  const { chatId, chatName } = route.params
+
+  const handleGoBack = () => {
+    navigation.goBack()
+  }
+
   const fetchMessages = async () => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}chat/${chatId}/message`
-      )
+      const response = await fetch(`${API_BASE_URL}chat/${chatId}/message`)
       const data = await response.json()
       setMessages(data)
     } catch (error) {
@@ -35,6 +43,7 @@ function MessagesScreen({ route, navigation }) {
       setIsLoading(false)
     }
   }
+
   useEffect(() => {
     fetchMessages()
   }, [])
@@ -42,6 +51,11 @@ function MessagesScreen({ route, navigation }) {
   return (
     <View style={styles.pageWrapper}>
       <SafeAreaView style={styles.container}>
+        <Header title={chatName} backNav={handleGoBack}>
+          <ActionsBar>
+            <IconButton name={'ellipsis-vertical'} />
+          </ActionsBar>
+        </Header>
         <KeyboardAvoidingView
           style={styles.innerContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : null}
@@ -84,7 +98,8 @@ function MessagesScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   pageWrapper: {
-    ...pageWrapper,
+    flex: 1,
+    backgroundColor: colors.secondaryMedium,
   },
   container: {
     flex: 1,
@@ -92,6 +107,8 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
+    backgroundColor: colors.white,
+    justifyContent: 'flex-end',
   },
 })
 

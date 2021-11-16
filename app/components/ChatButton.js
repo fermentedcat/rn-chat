@@ -6,7 +6,7 @@ import theme from '../styles/theme'
 
 function ChatButton({chat, navigation}) {
   const handleOnPress = () => {
-    navigation.navigate('Messages', { chatId: chat._id })
+    navigation.navigate('Messages', { chatId: chat._id, chatName: chat.title })
   }
 
   return (

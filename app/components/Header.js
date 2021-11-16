@@ -6,18 +6,19 @@ import theme from '../styles/theme'
 import colors from '../styles/colors'
 
 import { Image, Text, View, StyleSheet } from 'react-native'
+import IconButton from './IconButton'
 
-function Header({ title, logo, children: actions }) {
+function Header({ title, logo, backNav, children: actions }) {
   return (
     <View style={styles().container}>
-      {logo && (
+      {logo ? (
         <View style={styles().logoWrapper}>
           <Image
             source={require('../assets/snick-snack.png')}
             style={styles().logo}
           />
         </View>
-      )}
+      ) : backNav && <IconButton name="arrow-back" onPress={backNav}/>}
       <View style={styles(actions, logo).titleWrapper}>
         <Text numberOfLines={1} style={styles().heading}>{title || 'Snick Snack'}</Text>
       </View>
@@ -31,6 +32,7 @@ const styles = (actions, logo) => StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    height: 85,
   },
   titleWrapper: {
     flex: 2,

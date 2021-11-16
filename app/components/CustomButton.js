@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, Text, View, StyleSheet, Platform } from 'react-native'
 
-import getColorBrightness from '../helpers/getColorBrightness'
+import getColorBrightness from '../utils/getColorBrightness'
 import colors from '../styles/colors'
 import theme from '../styles/theme'
 
