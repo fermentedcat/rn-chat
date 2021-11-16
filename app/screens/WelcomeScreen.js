@@ -7,7 +7,7 @@ import {
 import CustomButton from '../components/CustomButton'
 import colors from '../styles/colors'
 
-import { wrapper, headingText } from '../styles/common'
+import { pageWrapper, headingText } from '../styles/common'
 
 const handleLogin = () => {
   console.log('login')
@@ -46,7 +46,7 @@ function WelcomeScreen(props) {
 
 const styles = StyleSheet.create({
   container: {
-    ...wrapper,
+    ...pageWrapper,
     alignItems: 'center',
   },
   heading: {

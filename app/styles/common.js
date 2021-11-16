@@ -1,7 +1,7 @@
 import theme from './theme'
 import colors from './colors'
 
-export const wrapper = {
+export const pageWrapper = {
   flex: 1,
   backgroundColor: theme.BACKGROUND_COLOR_LIGHT,
 }
