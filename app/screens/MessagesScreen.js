@@ -32,6 +32,27 @@ function MessagesScreen({ route, navigation }) {
     navigation.goBack()
   }
 
+  const handleSendMessage = async (message) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}chat/${chatId}/message`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(message)
+      })
+      const data = await response.json()
+      console.log(data)
+      setMessages((prevState) => {
+        return [...prevState, data]
+      })
+      return ''
+    } catch (error) {
+      console.log(error)
+      return message
+    }
+  }
+
   const fetchMessages = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}chat/${chatId}/message`)
@@ -69,7 +90,7 @@ function MessagesScreen({ route, navigation }) {
               data={messages}
               keyExtractor={(item) => item._id}
               inverted
-              style={{ flex: 1, width: '100%' }}
+              style={styles.messageList}
               contentContainerStyle={{
                 flexDirection: 'column-reverse',
               }}
@@ -86,8 +107,9 @@ function MessagesScreen({ route, navigation }) {
             />
           )}
           <MessageInput
+            onSubmit={handleSendMessage}
             placeholder={
-              messages && messages.length > 0 ? 'Reply...' : 'Your message...'
+              messages && messages.length > 0 ? 'Reply...' : 'Type your message...'
             }
           />
         </KeyboardAvoidingView>
@@ -109,6 +131,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'flex-end',
+  },
+  messageList: { 
+    flex: 1, 
+    width: '100%' 
   },
 })
 
