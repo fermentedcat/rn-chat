@@ -22,6 +22,7 @@ import ActionsBar from '../components/ActionsBar'
 import IconButton from '../components/IconButton'
 import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
+import Spinner from '../components/Spinner'
 
 function MessagesScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -42,7 +43,6 @@ function MessagesScreen({ route, navigation }) {
         body: JSON.stringify(message)
       })
       const data = await response.json()
-      console.log(data)
       setMessages((prevState) => {
         return [...prevState, data]
       })
@@ -81,7 +81,7 @@ function MessagesScreen({ route, navigation }) {
           style={styles.innerContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : null}
         >
-          {isLoading && <Text style={{ padding: 50 }}>Loading...</Text>}
+          {isLoading && <Spinner />}
           {!isLoading && !messages && (
             <Text style={{ padding: 50 }}>Failed to fetch messages.</Text>
           )}
