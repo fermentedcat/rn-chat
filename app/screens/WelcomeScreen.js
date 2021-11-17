@@ -29,15 +29,13 @@ function WelcomeScreen({ navigation }) {
       <View style={{ width: '70%' }}>
         <CustomButton
           title="Login"
-          handlePress={handleLogin}
-          bgColor={colors.info}
-          rippleColor={colors.infoDark}
+          onPress={handleLogin}
+          bgColor={colors.submit}
         />
         <CustomButton
           title="Register"
-          handlePress={handleRegister}
-          bgColor={colors.primary}
-          rippleColor={colors.primaryDark}
+          onPress={handleRegister}
+          bgColor={colors.option}
         />
       </View>
     </View>
