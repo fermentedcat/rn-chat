@@ -7,7 +7,7 @@ export const pageWrapper = {
 }
 
 export const headingText = {
-  fontSize: theme.FONT_SIZE_MEDIUM,
+  fontSize: theme.FONT_SIZE_HEADING,
   padding: 10,
   fontWeight: theme.FONT_WEIGHT_BOLD,
 }
@@ -15,5 +15,15 @@ export const headingText = {
 export const textInput = {
   padding: theme.TEXT_INPUT_PADDING,
   backgroundColor: theme.BACKGROUND_COLOR_LIGHT,
-  alignSelf: 'stretch'
+  fontSize: theme.FONT_SIZE_LARGE,
+  borderWidth: 1,
+  borderColor: colors.secondaryMedium,
+  borderRadius: 100,
+  marginVertical: 5,
+  alignSelf: 'stretch',
+  
+}
+
+export const input = {
+  padding: 10,
 }

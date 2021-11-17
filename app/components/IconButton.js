@@ -1,6 +1,6 @@
 import React from 'react'
 
-import textColorByBg from '../utils/textColorByBg'
+import textColorByBg from '../utils/colors/textColorByBg'
 
 import colors from '../styles/colors'
 import theme from '../styles/theme'

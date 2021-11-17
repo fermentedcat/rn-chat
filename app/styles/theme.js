@@ -1,3 +1,5 @@
+import darkenHex from '../utils/colors/darkenHex';
+import lightenHex from '../utils/colors/lightenHex';
 import colors from './colors';
 
 export default {
@@ -12,6 +14,13 @@ export default {
   LETTER_SPACING_MEDIUM: 0.95,
   LETTER_SPACING_WIDE: 1.95,
   BACKGROUND_COLOR_LIGHT: colors.white,
+  MODAL_OVERLAY: colors.greyTransparent,
   CONTAINER_PADDING: 20,
-  TEXT_INPUT_PADDING: 10
+  TEXT_INPUT_PADDING: 10,
+  DARKEN(color) {
+    return darkenHex(color, 10)
+  },
+  LIGHTEN(color) {
+    return lightenHex(color, 10)
+  }
 }
