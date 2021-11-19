@@ -1,22 +1,18 @@
 import React from 'react'
-import {
-  Image,
-  StyleSheet,
-  View,
-} from 'react-native'
-import CustomButton from '../components/CustomButton'
-import colors from '../styles/colors'
 
+import colors from '../styles/colors'
 import { pageWrapper, headingText } from '../styles/common'
 
+import { Image, StyleSheet, View } from 'react-native'
+import CustomButton from '../components/CustomButton'
 
 function WelcomeScreen({ navigation }) {
   const handleLogin = () => {
-    navigation.navigate('Chats')
+    navigation.navigate('Login')
   }
-  
+
   const handleRegister = () => {
-    console.log('register')
+    navigation.navigate('Register')
   }
   return (
     <View style={styles.container}>
