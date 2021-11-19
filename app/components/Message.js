@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 import Moment from 'react-moment'
 import colors from '../styles/colors'
 import theme from '../styles/theme'
+import { useSelector } from 'react-redux'
 
 function Message({ message, isRepeatedAuthor }) {
   const [showMoment, setShowMoment] = useState(false)
   const [showEdit, setShowEdit] = useState(false)
-  const userId = '618b9ea2ce54c1bbb202217d'
+  const userId = useSelector((state) => state.auth.userId)
   const isByUser = userId === message.author._id
 
   const handleToggleMoment = () => {

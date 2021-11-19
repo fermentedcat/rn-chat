@@ -23,11 +23,15 @@ import IconButton from '../components/IconButton'
 import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
 import Spinner from '../components/Spinner'
+import { callGet, callPost } from '../api/api'
+import { useSelector } from 'react-redux'
 
 function MessagesScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true)
   const [messages, setMessages] = useState(null)
   const { chatId, chatName } = route.params
+  const endpoint = `chat/${chatId}/message`
+  const token = useSelector((state) => state.auth.token)
 
   const handleGoBack = () => {
     navigation.goBack()
@@ -35,16 +39,10 @@ function MessagesScreen({ route, navigation }) {
 
   const handleSendMessage = async (message) => {
     try {
-      const response = await fetch(`${API_BASE_URL}chat/${chatId}/message`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(message)
-      })
-      const data = await response.json()
+      const response = await callPost(message, endpoint, token)
+      const newMessage = response.data
       setMessages((prevState) => {
-        return [...prevState, data]
+        return [...prevState, newMessage]
       })
       return ''
     } catch (error) {
@@ -55,8 +53,8 @@ function MessagesScreen({ route, navigation }) {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}chat/${chatId}/message`)
-      const data = await response.json()
+      const response = await callGet(endpoint, token)
+      const data = response.data
       setMessages(data)
     } catch (error) {
       console.log(error)

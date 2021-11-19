@@ -38,9 +38,8 @@ function ChatForm({ onSubmit, onClose }) {
       private: isPrivate,
     }
     try {
-      const response = callPost(chatData, 'chat', token)
+      const response = await callPost(chatData, 'chat', token)
       const newChat = response.data
-      console.log(newChat)
       onSubmit(newChat)
       onClose()
     } catch (error) {
