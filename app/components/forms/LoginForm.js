@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import * as SecureStore from 'expo-secure-store';
 
 import { useInput } from '../../hooks/use-input'
 import { validateEmail, validateString } from '../../utils/validators'
@@ -40,6 +41,7 @@ function LoginForm(props) {
     try {
       const response = await callPost(userData, 'user/login')
       const token = response.data
+      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token);
       dispatch(login(token))
     } catch (error) {
       console.log('login:', error)

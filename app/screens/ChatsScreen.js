@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import * as SecureStore from 'expo-secure-store';
 
 import { useDispatch, useSelector } from 'react-redux'
 import { callGet } from '../api/api'
@@ -31,6 +32,7 @@ function ChatsScreen({ navigation }) {
   const dispatch = useDispatch()
 
   const handleLogout = () => {
+    SecureStore.deleteItemAsync('SNICK_SNACK_TOKEN')
     dispatch(logout())
   }
 
