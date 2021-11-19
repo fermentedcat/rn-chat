@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import * as SecureStore from 'expo-secure-store';
 
 import { useInput } from '../../hooks/use-input'
 
@@ -88,6 +89,7 @@ function RegisterForm() {
     try {
       const response = await callPost(userData, 'user')
       const token = response.data
+      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
       dispatch(login(token))
     } catch (error) {
       console.log(error)

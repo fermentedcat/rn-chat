@@ -41,7 +41,7 @@ function LoginForm(props) {
     try {
       const response = await callPost(userData, 'user/login')
       const token = response.data
-      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token);
+      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
       dispatch(login(token))
     } catch (error) {
       console.log('login:', error)
