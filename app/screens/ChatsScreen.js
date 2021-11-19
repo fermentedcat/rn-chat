@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
-import { API_BASE_URL } from 'react-native-dotenv'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { callGet } from '../api/api'
+import { logout } from '../store/auth-slice'
 import colors from '../styles/colors'
-import theme from '../styles/theme'
 
 import {
   FlatList,
@@ -20,17 +20,18 @@ import ChatButton from '../components/ChatButton'
 import ActionsBar from '../components/ActionsBar'
 import IconButton from '../components/IconButton'
 import Header from '../components/Header'
-import ChatForm from '../components/ChatForm'
+import ChatForm from '../components/forms/ChatForm'
 import CustomModal from '../components/CustomModal'
 
 function ChatsScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [subscriptions, setSubscriptions] = useState(null)
-  const userId = '618b9ea2ce54c1bbb202217d'
+  const { userId, token } = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
 
   const handleLogout = () => {
-    navigation.navigate('Welcome')
+    dispatch(logout())
   }
 
   const toggleModal = () => {
@@ -49,9 +50,8 @@ function ChatsScreen({ navigation }) {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}user/${userId}/subscription`)
-      const data = await response.json()
-      setSubscriptions(data)
+      const response = await callGet(`user/${userId}/subscription`, token)
+      setSubscriptions(response.data)
     } catch (error) {
       console.log(error)
     } finally {
@@ -79,7 +79,11 @@ function ChatsScreen({ navigation }) {
             keyExtractor={(item) => item.chat._id}
             style={styles.chatList}
             renderItem={({ item, index }) => (
-              <ChatButton chat={item.chat} navigation={navigation} index={index} />
+              <ChatButton
+                chat={item.chat}
+                navigation={navigation}
+                index={index}
+              />
             )}
           />
         )}
