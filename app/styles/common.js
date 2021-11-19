@@ -12,6 +12,11 @@ export const headingText = {
   fontWeight: theme.FONT_WEIGHT_BOLD,
 }
 
+export const subHeadingText = {
+  fontSize: theme.FONT_SIZE_MEDIUM,
+  fontWeight: theme.FONT_WEIGHT_BOLD,
+}
+
 export const textInput = {
   padding: theme.TEXT_INPUT_PADDING,
   backgroundColor: theme.BACKGROUND_COLOR_LIGHT,
