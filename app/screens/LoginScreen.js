@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
   login: {
     flex: 1,
     justifyContent: 'flex-end',
+    marginBottom: 20,
   },
   logoContainer: {
     flex: 1,
