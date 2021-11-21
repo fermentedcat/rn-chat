@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { authenticateToken } from '../store/auth-slice';
-
+import { authenticateToken } from '../store/auth-slice'
 
 import { View } from 'react-native'
 
-function Home({navigation}) {
+function Home({ navigation }) {
   const { isAuthenticated, isLoading } = useSelector((state) => state.auth)
   const [checkedToken, setCheckedToken] = useState(false)
   const dispatch = useDispatch()
@@ -22,7 +21,7 @@ function Home({navigation}) {
   useEffect(() => {
     getToken()
   }, [])
-
+  
   useEffect(() => {
     if (isAuthenticated) {
       navigation.navigate('Chats')
@@ -31,7 +30,7 @@ function Home({navigation}) {
       navigation.navigate('Welcome')
     }
   }, [isAuthenticated, isLoading, checkedToken])
-  
+
   return <View />
 }
 
