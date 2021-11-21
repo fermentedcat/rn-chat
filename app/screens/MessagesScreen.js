@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react'
 
-import { API_BASE_URL } from 'react-native-dotenv'
-
-import { pageWrapper } from '../styles/common'
-
 import colors from '../styles/colors'
 
 import {
@@ -25,9 +21,11 @@ import MessageInput from '../components/MessageInput'
 import Spinner from '../components/Spinner'
 import { callGet, callPost } from '../api/api'
 import { useSelector } from 'react-redux'
+import ChatMenu from '../components/ChatMenu'
 
 function MessagesScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true)
+  const [showMenu, setShowMenu] = useState(false)
   const [messages, setMessages] = useState(null)
   const { chatId, chatName } = route.params
   const endpoint = `chat/${chatId}/message`
@@ -35,6 +33,10 @@ function MessagesScreen({ route, navigation }) {
 
   const handleGoBack = () => {
     navigation.goBack()
+  }
+
+  const toggleMenu = () => {
+    setShowMenu(!showMenu)
   }
 
   const handleSendMessage = async (message) => {
@@ -72,7 +74,8 @@ function MessagesScreen({ route, navigation }) {
       <SafeAreaView style={styles.container}>
         <Header title={chatName} backNav={handleGoBack}>
           <ActionsBar>
-            <IconButton name={'ellipsis-vertical'} />
+            <IconButton name={'ellipsis-vertical'} onPress={toggleMenu}/>
+            {showMenu && <ChatMenu chatId={chatId} onClose={toggleMenu} navigation={navigation}/>}
           </ActionsBar>
         </Header>
         <KeyboardAvoidingView
