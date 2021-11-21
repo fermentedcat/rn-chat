@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import colors from '../../styles/colors'
 
@@ -7,10 +7,11 @@ import CustomButton from '../CustomButton'
 import { headingText, subHeadingText, textInput } from '../../styles/common'
 import { useInput } from '../../hooks/use-input'
 import { validateString } from '../../utils/validators'
-import { callPost } from '../../api/api'
+import { callGet, callPost } from '../../api/api'
 import { useSelector } from 'react-redux'
 
-function ChatForm({ onSubmit, onClose }) {
+function ChatForm({ onSubmit, onClose, chatId }) {
+  const [chat, setChat] = useState(null)
   const {
     value: titleInput,
     isValid: titleIsValid,
@@ -38,19 +39,50 @@ function ChatForm({ onSubmit, onClose }) {
       private: isPrivate,
     }
     try {
-      const response = await callPost(chatData, 'chat', token)
-      const newChat = response.data
-      onSubmit(newChat)
+      if (!chatId) {
+        const response = await callPost(chatData, 'chat', token)
+        const newChat = response.data
+        onSubmit(newChat)
+      } else {
+        await callPost(chatData, `chat/${chatId}`, token)
+      }
       onClose()
     } catch (error) {
       console.log(error)
     }
   }
 
+  const getChat = async () => {
+    try {
+      const response = await callGet(`chat/${chatId}`, token)
+      const data = response.data
+      console.log(data)
+      setChat(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (chat) {
+      titleOnChange(chat.title)
+      descriptionOnChange(chat.description)
+      setIsPrivate(chat.private)
+    }
+  }, [chat])
+
+  useEffect(() => {
+    if (chatId) {
+      getChat()
+    }
+  }, [chatId])
+
   return (
     <View style={styles.formWrapper}>
-      <Text style={styles.title}>Create a new chat</Text>
+      <Text style={styles.title}>{!chatId ? 'Create a new chat' : 'Edit chat'}</Text>
       <View style={styles.inputGroup}>
+      <Text style={styles.label}>Title</Text>
+        
         <TextInput
           placeholder="Chat name*"
           style={[styles.input, titleHasError && styles.errorInput]}
@@ -63,6 +95,8 @@ function ChatForm({ onSubmit, onClose }) {
             Chat name is required.
           </Text>
         )}
+      <Text style={styles.label}>Description</Text>
+
         <TextInput
           placeholder="Description"
           style={styles.input}
@@ -70,7 +104,7 @@ function ChatForm({ onSubmit, onClose }) {
           onChangeText={descriptionOnChange}
         />
       </View>
-      <Text style={[styles.text, styles.subHeader]}>
+      <Text style={styles.label}>
         Make this chat private
       </Text>
       <View style={styles.privacyWrapper}>
@@ -90,7 +124,7 @@ function ChatForm({ onSubmit, onClose }) {
       </View>
       <View style={styles.buttonGroup}>
         <CustomButton
-          title="Create chat"
+          title={!chatId ? 'Create chat' : 'Save'}
           onPress={handleSubmitChat}
           bgColor={colors.submit}
         />
@@ -109,7 +143,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   formWrapper: {
-    width: '85%',
+    width: '80%',
     backgroundColor: colors.secondaryExtraLight,
     borderRadius: 50,
     padding: 25,
@@ -130,17 +164,16 @@ const styles = StyleSheet.create({
   inputGroup: {
     marginVertical: 15,
   },
-  text: {
-    paddingHorizontal: 5,
-  },
   title: {
     textAlign: 'center',
     ...headingText,
   },
-  subHeader: {
+  label: {
+    paddingHorizontal: 5,
     ...subHeadingText,
   },
   switchDescription: {
+    paddingLeft: 10,
     color: colors.secondaryMedium,
   },
   privacyWrapper: {
