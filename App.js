@@ -12,6 +12,7 @@ import WelcomeScreen from './app/screens/WelcomeScreen'
 import Home from './app/screens/Home'
 import RegisterScreen from './app/screens/RegisterScreen'
 import LoginScreen from './app/screens/LoginScreen'
+import EditScreen from './app/screens/EditScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -58,6 +59,13 @@ export default function App() {
           <Stack.Screen
             name="Messages"
             component={MessagesScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Edit"
+            component={EditScreen}
             options={{
               headerShown: false,
             }}
