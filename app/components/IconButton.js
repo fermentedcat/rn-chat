@@ -8,23 +8,29 @@ import theme from '../styles/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { Pressable, StyleSheet } from 'react-native'
 
-function IconButton({name, onPress}) {
+function IconButton({name, onPress, bgColor}) {
   return (
-    <Pressable style={styles.iconWrapper} onPress={onPress}>
-      <Ionicons style={styles.icon} name={name} />
+    <Pressable style={({pressed}) => [styles(bgColor).iconWrapper, pressed && styles(bgColor).pressed]} onPress={onPress}>
+      <Ionicons style={styles(bgColor).icon} name={name} />
     </Pressable>
   )
 }
 
-const styles = StyleSheet.create({
+const styles = (bgColor) => StyleSheet.create({
   iconWrapper: {
-    padding: 8,
-    // backgroundColor: colors.secondary,
+    backgroundColor: bgColor ? bgColor : colors.secondaryMedium,
+    height: 40,
+    width: 40,
     borderRadius: 100,
     margin: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  pressed: {
+    backgroundColor: bgColor ? theme.DARKEN(bgColor) : colors.secondary,
   },
   icon: {
-    color: textColorByBg(colors.secondaryMedium),
+    color: textColorByBg(bgColor || colors.secondaryMedium),
     fontSize: theme.FONT_SIZE_HEADING,
   },
 })
