@@ -1,4 +1,8 @@
 import React from 'react'
+
+import theme from '../styles/theme'
+import { pageWrapper } from '../styles/common'
+
 import {
   KeyboardAvoidingView,
   Platform,
@@ -7,8 +11,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import ChatForm from '../components/forms/ChatForm'
-import { pageWrapper } from '../styles/common'
-import theme from '../styles/theme'
+import ChatInviteForm from '../components/forms/ChatInviteForm'
 
 function EditScreen({ route, navigation }) {
   const { type, prop } = route.params
@@ -21,13 +24,14 @@ function EditScreen({ route, navigation }) {
 
   switch (type) {
     case 'chat': {
-      output = (
-        <ChatForm
-          chatId={prop}
-          onClose={handleGoBack}
-        />
-      )
+      output = <ChatForm chatId={prop} onClose={handleGoBack} />
+      break
     }
+    case 'invite': {
+      output = <ChatInviteForm chatId={prop} onClose={handleGoBack} />
+      break
+    }
+    default: break
   }
 
   return (
@@ -35,7 +39,7 @@ function EditScreen({ route, navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.pageWrapper}
     >
-      <SafeAreaView style={styles.container}>{output}</SafeAreaView>
+      <SafeAreaView style={styles.container}>{output && output}</SafeAreaView>
     </KeyboardAvoidingView>
   )
 }
@@ -43,7 +47,7 @@ function EditScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   pageWrapper: {
     ...pageWrapper,
-    paddingTop: Platform.OS === 'andoid' ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     backgroundColor: theme.BACKGROUND_COLOR_LIGHT,
   },
   container: {

@@ -8,7 +8,6 @@ import {
 } from 'react-native'
 import colors from '../styles/colors'
 import { headingText, subHeadingText } from '../styles/common'
-import theme from '../styles/theme'
 import CustomModal from './CustomModal'
 import IconButton from './IconButton'
 
@@ -19,7 +18,7 @@ function ChatMenu({ chatId, onClose, navigation }) {
   }
   
   const handleGoToInvite = () => {
-    navigation.navigate('Edit', { type: 'invite' })
+    navigation.navigate('Edit', { type: 'invite', prop: chatId })
     onClose()
   }
 
