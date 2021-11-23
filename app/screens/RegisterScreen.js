@@ -1,6 +1,7 @@
 import React from 'react'
 
 import colors from '../styles/colors'
+import theme from '../styles/theme'
 import { pageWrapper, subHeadingText } from '../styles/common'
 
 import {
@@ -27,7 +28,7 @@ function RegisterScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.pageWrapper}>
-      <Header title="Register" backNav={handleGoBack} />
+      <Header title="Register" backNav={handleGoBack} bgColor={theme.BACKGROUND_COLOR_LIGHT} />
       <View style={styles.contentWrapper}>
         <KeyboardAvoidingView
           style={styles.formWrapper}
@@ -38,7 +39,7 @@ function RegisterScreen({ navigation }) {
           <Text style={styles.loginText}>Already registered?</Text>
           <CustomButton
             title="Login"
-            bgColor={colors.info}
+            bgColor={colors.primary}
             onPress={handleGoToLogin}
           />
         </View>
@@ -51,7 +52,6 @@ function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   pageWrapper: {
     ...pageWrapper,
-    backgroundColor: colors.success,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   contentWrapper: {

@@ -15,8 +15,10 @@ import {
 import LoginForm from '../components/forms/LoginForm'
 import Header from '../components/Header'
 import CustomButton from '../components/CustomButton'
+import theme from '../styles/theme'
 
 function LoginScreen({ navigation }) {
+
   const handleGoBack = () => {
     navigation.goBack()
   }
@@ -27,7 +29,7 @@ function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.pageWrapper}>
-      <Header title="Login" backNav={handleGoBack} />
+      <Header title="Login" backNav={handleGoBack} bgColor={theme.BACKGROUND_COLOR_LIGHT} />
       <View style={styles.contentWrapper}>
         <KeyboardAvoidingView
           style={styles.formWrapper}
@@ -44,7 +46,7 @@ function LoginScreen({ navigation }) {
             <Text style={styles.loginText}>No account?</Text>
             <CustomButton
               title="Register"
-              bgColor={colors.info}
+              bgColor={colors.danger}
               onPress={handleGoToRegister}
             />
           </View>
@@ -57,12 +59,12 @@ function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   pageWrapper: {
     ...pageWrapper,
-    backgroundColor: colors.success,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   contentWrapper: {
     flex: 1,
-    marginHorizontal: 30,
+    backgroundColor: theme.BACKGROUND_COLOR_LIGHT,
+    paddingHorizontal: 30,
     alignItems: 'stretch',
   },
   formWrapper: {

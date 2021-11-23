@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store'
 
 import { useInput } from '../../hooks/use-input'
 
@@ -157,7 +157,7 @@ function RegisterForm() {
       {step < steps.length - 1 ? (
         <CustomButton
           title="Next"
-          bgColor={colors.primary}
+          bgColor={colors.info}
           disabled={!stepIsValid}
           onPress={() => setStep(step + 1)}
         />
@@ -184,7 +184,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 2,
     justifyContent: 'flex-start',
+    // ...formWrapper,
+    // width: '100%'
   },
+  formWrapper: {},
   inputGroup: {
     marginBottom: 10,
   },

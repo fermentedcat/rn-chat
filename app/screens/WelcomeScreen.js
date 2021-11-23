@@ -31,7 +31,7 @@ function WelcomeScreen({ navigation }) {
         <CustomButton
           title="Register"
           onPress={handleRegister}
-          bgColor={colors.option}
+          bgColor={colors.danger}
         />
       </View>
     </View>

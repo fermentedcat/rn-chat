@@ -83,7 +83,7 @@ function LoginForm(props) {
       </View>
       <CustomButton
         title="Login"
-        bgColor={colors.warning}
+        bgColor={colors.submit}
         disabled={!formIsValid}
         onPress={handleLogin}
       />
@@ -94,13 +94,14 @@ function LoginForm(props) {
 const styles = StyleSheet.create({
   label: {
     ...subHeadingText,
+    marginHorizontal: 10
   },
   container: {
     flex: 3,
   },
   input: {
     ...textInput,
-    borderRadius: 5,
+    // borderRadius: 5,
   },
   inputGroup: {
     marginBottom: 10,

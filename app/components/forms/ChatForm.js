@@ -4,7 +4,7 @@ import colors from '../../styles/colors'
 
 import { Text, TextInput, View, StyleSheet, Switch } from 'react-native'
 import CustomButton from '../CustomButton'
-import { headingText, subHeadingText, textInput } from '../../styles/common'
+import { formWrapper, headingText, subHeadingText, textInput } from '../../styles/common'
 import { useInput } from '../../hooks/use-input'
 import { validateString } from '../../utils/validators'
 import { callGet, callPost } from '../../api/api'
@@ -84,7 +84,7 @@ function ChatForm({ onSubmit, onClose, chatId }) {
       <Text style={styles.label}>Title</Text>
         
         <TextInput
-          placeholder="Chat name*"
+          placeholder="Chat title*"
           style={[styles.input, titleHasError && styles.errorInput]}
           value={titleInput}
           onChangeText={titleOnChange}
@@ -92,7 +92,7 @@ function ChatForm({ onSubmit, onClose, chatId }) {
         />
         {titleHasError && (
           <Text style={[styles.text, styles.errorText]}>
-            Chat name is required.
+            Title is required.
           </Text>
         )}
       <Text style={styles.label}>Description</Text>
@@ -143,12 +143,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   formWrapper: {
-    width: '80%',
-    backgroundColor: colors.secondaryExtraLight,
-    borderRadius: 50,
-    padding: 25,
-    paddingVertical: 15,
-    justifyContent: 'space-between',
+    ...formWrapper
   },
   errorInput: {
     borderColor: colors.danger,

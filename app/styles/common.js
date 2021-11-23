@@ -26,9 +26,23 @@ export const textInput = {
   borderRadius: 100,
   marginVertical: 5,
   alignSelf: 'stretch',
-  
 }
 
 export const input = {
   padding: 10,
+}
+
+export const formWrapper = {
+  width: '85%',
+  backgroundColor: colors.secondaryExtraLight,
+  borderRadius: 50,
+  padding: 25,
+  paddingVertical: 15,
+  justifyContent: 'space-between',
+}
+
+export const errorMessage = {
+  color: colors.danger,
+  paddingHorizontal: 10,
+  paddingBottom: 5,
 }

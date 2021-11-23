@@ -68,10 +68,10 @@ function ChatsScreen({ navigation }) {
   return (
     <View style={styles.pageWrapper}>
       <SafeAreaView style={styles.container}>
-        <Header title="Chats" logo>
+        <Header title="Chats" logo bgColor={colors.success}>
           <ActionsBar>
-            <IconButton name="search" />
-            <IconButton name="ellipsis-vertical" onPress={handleLogout} />
+            <IconButton name="search" bgColor={colors.success}/>
+            <IconButton name="ellipsis-vertical" onPress={handleLogout} bgColor={colors.success}/>
           </ActionsBar>
         </Header>
         {isLoading && <Text>Loading...</Text>}
@@ -101,7 +101,7 @@ function ChatsScreen({ navigation }) {
 const styles = StyleSheet.create({
   pageWrapper: {
     flex: 1,
-    backgroundColor: colors.secondaryMedium,
+    backgroundColor: colors.success,
   },
   container: {
     flex: 1,

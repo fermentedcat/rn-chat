@@ -39,11 +39,11 @@ function FormInput({ input, title, validationError, apiError, type }) {
 
 const styles = StyleSheet.create({
   label: {
-    ...subHeadingText
+    ...subHeadingText,
+    marginHorizontal: 10,
   },
   input: {
     ...textInput,
-    borderRadius: 5,
   },
   error: {
     borderWidth: 1,

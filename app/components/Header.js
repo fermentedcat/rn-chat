@@ -8,7 +8,7 @@ import colors from '../styles/colors'
 import { Image, Text, View, StyleSheet } from 'react-native'
 import IconButton from './IconButton'
 
-function Header({ title, logo, backNav, children: actions }) {
+function Header({ title, logo, backNav, bgColor, children: actions }) {
   return (
     <View style={styles().container}>
       {logo ? (
@@ -21,7 +21,7 @@ function Header({ title, logo, backNav, children: actions }) {
       ) : (
         backNav && (
           <View style={styles().logoWrapper}>
-            <IconButton name="arrow-back" onPress={backNav} />
+            <IconButton name="arrow-back" bgColor={bgColor} onPress={backNav} />
           </View>
         )
       )}
@@ -31,7 +31,7 @@ function Header({ title, logo, backNav, children: actions }) {
           !logo && !backNav && styles().titleLeft,
         ]}
       >
-        <Text numberOfLines={1} style={styles().heading}>
+        <Text numberOfLines={1} style={[styles().heading, { color: textColorByBg(bgColor)}]}>
           {title || 'Snick Snack'}
         </Text>
       </View>
@@ -81,6 +81,9 @@ const styles = (actions, logo) =>
       height: 65,
       flex: !actions ? 1 : 0,
     },
+    blackText: {
+      color: colors.black
+    }
   })
 
 export default Header

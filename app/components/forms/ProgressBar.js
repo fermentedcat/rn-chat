@@ -36,22 +36,26 @@ const styles = StyleSheet.create({
     marginVertical: 40,
   },
   item: {
+    marginHorizontal: -1,
     height: 50,
     width: 50,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 100,
-    borderWidth: 2,
+    borderWidth: 4,
     backgroundColor: 'rgba(0,0,0,0)',
     borderColor: colors.secondaryLight,
+    zIndex: 10,
   },
   finished: {
-    backgroundColor: colors.secondaryLight,
+    backgroundColor: colors.info,
+    borderColor: colors.info,
+    // opacity: 0.5,
+    // color: colors.white,
   },
   current: {
-    borderWidth: 2,
     backgroundColor: colors.white,
-    borderColor: colors.white,
+    borderColor: colors.grey,
   },
   step: {
     ...subHeadingText,
@@ -59,10 +63,11 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 10,
-    backgroundColor: colors.black,
+    backgroundColor: colors.grey,
   },
   nextLine: {
-    opacity: 0.5,
+    backgroundColor: colors.secondaryLight,
+
   },
 })
 

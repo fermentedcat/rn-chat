@@ -7,9 +7,9 @@ import colors from '../styles/colors'
 import theme from '../styles/theme'
 
 function CustomButton({ title, onPress, bgColor, disabled }) {
-  const isLightBg = getColorBrightness(bgColor) > 200
+  const isLightBg = getColorBrightness(bgColor) > 180
   const textColor = disabled
-    ? colors.secondaryLight
+    ? colors.secondaryMedium
     : isLightBg
     ? colors.black
     : colors.white
@@ -59,7 +59,7 @@ const styles = (bgColor, textColor) =>
       textAlign: 'center',
     },
     disabled: {
-      backgroundColor: colors.secondaryMedium,
+      backgroundColor: colors.secondaryLight,
     },
   })
 
