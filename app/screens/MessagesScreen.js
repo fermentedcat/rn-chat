@@ -24,9 +24,14 @@ import { useSelector } from 'react-redux'
 import ChatMenu from '../components/ChatMenu'
 
 function MessagesScreen({ route, navigation }) {
+  const initialError = {
+    type: null,
+    message: null,
+  }
+  const [error, setError] = useState(initialError)
   const [isLoading, setIsLoading] = useState(true)
   const [showMenu, setShowMenu] = useState(false)
-  const [messages, setMessages] = useState(null)
+  const [messages, setMessages] = useState([])
   const { chatId, chatName } = route.params
   const endpoint = `chat/${chatId}/message`
   const token = useSelector((state) => state.auth.token)
@@ -59,7 +64,7 @@ function MessagesScreen({ route, navigation }) {
       const data = response.data
       setMessages(data)
     } catch (error) {
-      console.log(error)
+      setError({ type: 'danger', message: 'Failed to fetch messages.'})
     } finally {
       setIsLoading(false)
     }
@@ -72,9 +77,9 @@ function MessagesScreen({ route, navigation }) {
   return (
     <View style={styles.pageWrapper}>
       <SafeAreaView style={styles.container}>
-        <Header title={chatName} backNav={handleGoBack}>
+        <Header title={chatName} backNav={handleGoBack} bgColor={colors.success}>
           <ActionsBar>
-            <IconButton name={'ellipsis-vertical'} onPress={toggleMenu}/>
+            <IconButton name={'ellipsis-vertical'} onPress={toggleMenu} bgColor={colors.success}/>
             {showMenu && <ChatMenu chatId={chatId} onClose={toggleMenu} navigation={navigation}/>}
           </ActionsBar>
         </Header>
@@ -83,10 +88,10 @@ function MessagesScreen({ route, navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : null}
         >
           {isLoading && <Spinner />}
-          {!isLoading && !messages && (
-            <Text style={{ padding: 50 }}>Failed to fetch messages.</Text>
+          {error.message && (
+            <Text style={{ padding: 50 }}>{error.message}</Text>
           )}
-          {messages && (
+          {messages.length > 0 && (
             <FlatList
               data={messages}
               keyExtractor={(item) => item._id}
@@ -110,7 +115,7 @@ function MessagesScreen({ route, navigation }) {
           <MessageInput
             onSubmit={handleSendMessage}
             placeholder={
-              messages && messages.length > 0 ? 'Reply...' : 'Type your message...'
+              messages.length > 0 ? 'Reply...' : 'Type your message...'
             }
           />
         </KeyboardAvoidingView>
@@ -122,7 +127,7 @@ function MessagesScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   pageWrapper: {
     flex: 1,
-    backgroundColor: colors.secondaryMedium,
+    backgroundColor: colors.success,
   },
   container: {
     flex: 1,
