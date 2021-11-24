@@ -19,12 +19,20 @@ function EditScreen({ route, navigation }) {
   const handleGoBack = () => {
     navigation.goBack()
   }
+    
+  const handleGoToChats = () => {
+    navigation.navigate('Chats')
+  }
+
+  const handleGoToMessages = (chat) => {
+    navigation.navigate('Messages', {chatId: chat._id, chatName: chat.title})
+  }
 
   let output
 
   switch (type) {
     case 'chat': {
-      output = <ChatForm chatId={prop} onClose={handleGoBack} />
+      output = <ChatForm chatId={prop} onDelete={handleGoToChats} onSubmit={handleGoToMessages} />
       break
     }
     case 'invite': {

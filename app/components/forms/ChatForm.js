@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from 'react'
-
-import colors from '../../styles/colors'
-
-import { Text, TextInput, View, StyleSheet, Switch } from 'react-native'
-import CustomButton from '../CustomButton'
-import { formWrapper, headingText, subHeadingText, textInput } from '../../styles/common'
-import { useInput } from '../../hooks/use-input'
-import { validateString } from '../../utils/validators'
-import { callGet, callPost } from '../../api/api'
+import React, { useCallback, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
 import { useSelector } from 'react-redux'
 
-function ChatForm({ onSubmit, onClose, chatId }) {
+import colors from '../../styles/colors'
+import {
+  formWrapper,
+  headingText,
+  subHeadingText,
+  textInput,
+} from '../../styles/common'
+import { useInput } from '../../hooks/use-input'
+import { validateString } from '../../utils/validators'
+import { callDelete, callGet, callPost } from '../../api/api'
+
+import { Text, TextInput, View, StyleSheet, Switch, Alert } from 'react-native'
+import CustomButton from '../CustomButton'
+import IconButton from '../IconButton'
+
+function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
   const [chat, setChat] = useState(null)
   const {
     value: titleInput,
@@ -29,6 +36,23 @@ function ChatForm({ onSubmit, onClose, chatId }) {
     setIsPrivate(!isPrivate)
   }
 
+  const handleDelete = () => {
+    Alert.alert('Delete chat', 'Are you sure?', [
+      {
+        text: 'Yes',
+        onPress: async () => {
+          try {
+            await callDelete(`chat/${chatId}`, token)
+            onDelete()
+          } catch (error) {
+            console.log(error)
+          }
+        },
+      },
+      { text: 'No', style: 'cancel' },
+    ])
+  }
+
   const handleSubmitChat = async () => {
     if (!titleIsValid) {
       return
@@ -43,12 +67,14 @@ function ChatForm({ onSubmit, onClose, chatId }) {
         const response = await callPost(chatData, 'chat', token)
         const newChat = response.data
         onSubmit(newChat)
+        onClose()
       } else {
-        await callPost(chatData, `chat/${chatId}`, token)
+        const response = await callPost(chatData, `chat/${chatId}`, token)
+        const updated = response.data
+        onSubmit(updated)
       }
-      onClose()
     } catch (error) {
-      console.log(error)
+      console.log('error chat save', error)
     }
   }
 
@@ -56,33 +82,46 @@ function ChatForm({ onSubmit, onClose, chatId }) {
     try {
       const response = await callGet(`chat/${chatId}`, token)
       const data = response.data
-      console.log(data)
       setChat(data)
     } catch (error) {
       console.log(error)
     }
   }
 
-  useEffect(() => {
-    if (chat) {
-      titleOnChange(chat.title)
-      descriptionOnChange(chat.description)
-      setIsPrivate(chat.private)
-    }
-  }, [chat])
-
-  useEffect(() => {
-    if (chatId) {
-      getChat()
-    }
-  }, [chatId])
+  useFocusEffect(
+    useCallback(() => {
+      if (chat) {
+        titleOnChange(chat.title)
+        descriptionOnChange(chat.description)
+        setIsPrivate(chat.private)
+      }
+    }, [chat])
+  )
+  useFocusEffect(
+    useCallback(() => {
+      if (chatId) {
+        getChat()
+      }
+    }, [chatId])
+  )
 
   return (
     <View style={styles.formWrapper}>
-      <Text style={styles.title}>{!chatId ? 'Create a new chat' : 'Edit chat'}</Text>
+      <Text style={styles.title}>
+        {!chatId ? 'Create a new chat' : 'Edit chat'}
+      </Text>
+      {chatId && (
+        <View style={styles.delete}>
+          <IconButton
+            name="trash-outline"
+            bgColor={colors.transparent}
+            onPress={handleDelete}
+          />
+        </View>
+      )}
       <View style={styles.inputGroup}>
-      <Text style={styles.label}>Title</Text>
-        
+        <Text style={styles.label}>Title</Text>
+
         <TextInput
           placeholder="Chat title*"
           style={[styles.input, titleHasError && styles.errorInput]}
@@ -95,7 +134,7 @@ function ChatForm({ onSubmit, onClose, chatId }) {
             Title is required.
           </Text>
         )}
-      <Text style={styles.label}>Description</Text>
+        <Text style={styles.label}>Description</Text>
 
         <TextInput
           placeholder="Description"
@@ -104,9 +143,7 @@ function ChatForm({ onSubmit, onClose, chatId }) {
           onChangeText={descriptionOnChange}
         />
       </View>
-      <Text style={styles.label}>
-        Make this chat private
-      </Text>
+      <Text style={styles.label}>Make this chat private</Text>
       <View style={styles.privacyWrapper}>
         <Switch
           trackColor={{
@@ -119,7 +156,9 @@ function ChatForm({ onSubmit, onClose, chatId }) {
           value={isPrivate}
         />
         <Text style={[styles.text, styles.switchDescription]}>
-          {isPrivate ? 'Users can only join via invite.' : 'Anyone can join the chat.'}
+          {isPrivate
+            ? 'Users can only join via invite.'
+            : 'Anyone can join the chat.'}
         </Text>
       </View>
       <View style={styles.buttonGroup}>
@@ -143,7 +182,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   formWrapper: {
-    ...formWrapper
+    ...formWrapper,
   },
   errorInput: {
     borderColor: colors.danger,
@@ -175,6 +214,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
+  },
+  delete: {
+    position: 'absolute',
+    right: 20,
+    top: 20,
   },
 })
 

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import * as SecureStore from 'expo-secure-store';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { useDispatch, useSelector } from 'react-redux'
 import { callGet } from '../api/api'
@@ -61,9 +62,11 @@ function ChatsScreen({ navigation }) {
     }
   }
 
-  useEffect(() => {
-    fetchSubscriptions()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      fetchSubscriptions()
+    }, [])
+  )
 
   return (
     <View style={styles.pageWrapper}>
