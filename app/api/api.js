@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { API_BASE_URL } from 'react-native-dotenv'
 
-export const callGet = (endpoint, token) => 
+export const callGet = (endpoint, token) =>
   axios({
     url: `${API_BASE_URL}${endpoint}`,
     headers: { 'x-auth-token': token },

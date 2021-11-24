@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
+
+import { useFocusEffect } from '@react-navigation/native'
+import { Sse } from '../api/sse'
 
 import colors from '../styles/colors'
 
@@ -64,23 +67,43 @@ function MessagesScreen({ route, navigation }) {
       const data = response.data
       setMessages(data)
     } catch (error) {
-      setError({ type: 'danger', message: 'Failed to fetch messages.'})
+      setError({ type: 'danger', message: 'Failed to fetch messages.' })
     } finally {
       setIsLoading(false)
     }
   }
 
-  useEffect(() => {
-    fetchMessages()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      fetchMessages()
+      const stream = new Sse(`chat/${chatId}/messages`, token, setMessages)
+      return () => {
+        stream.cleanup()
+      }
+    }, [])
+  )
 
   return (
     <View style={styles.pageWrapper}>
       <SafeAreaView style={styles.container}>
-        <Header title={chatName} backNav={handleGoBack} bgColor={colors.success}>
+        <Header
+          title={chatName}
+          backNav={handleGoBack}
+          bgColor={colors.success}
+        >
           <ActionsBar>
-            <IconButton name={'ellipsis-vertical'} onPress={toggleMenu} bgColor={colors.success}/>
-            {showMenu && <ChatMenu chatId={chatId} onClose={toggleMenu} navigation={navigation}/>}
+            <IconButton
+              name={'ellipsis-vertical'}
+              onPress={toggleMenu}
+              bgColor={colors.success}
+            />
+            {showMenu && (
+              <ChatMenu
+                chatId={chatId}
+                onClose={toggleMenu}
+                navigation={navigation}
+              />
+            )}
           </ActionsBar>
         </Header>
         <KeyboardAvoidingView
@@ -138,9 +161,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: 'flex-end',
   },
-  messageList: { 
-    flex: 1, 
-    width: '100%' 
+  messageList: {
+    flex: 1,
+    width: '100%',
   },
 })
 
