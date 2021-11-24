@@ -13,7 +13,7 @@ import {
   StatusBar,
   Platform,
   KeyboardAvoidingView,
-  View,
+  Pressable,
 } from 'react-native'
 
 import Header from '../components/Header'
@@ -34,7 +34,9 @@ function MessagesScreen({ route, navigation }) {
   const [error, setError] = useState(initialError)
   const [isLoading, setIsLoading] = useState(true)
   const [showMenu, setShowMenu] = useState(false)
+  const [showEditMessage, setShowEditMessage] = useState('')
   const [messages, setMessages] = useState([])
+  const [editMessage, setEditMessage] = useState({})
   const { chatId, chatName } = route.params
   const endpoint = `chat/${chatId}/message`
   const token = useSelector((state) => state.auth.token)
@@ -47,17 +49,55 @@ function MessagesScreen({ route, navigation }) {
     setShowMenu(!showMenu)
   }
 
+  const handleCloseEditMessage = () => {
+    setShowEditMessage('')
+    setEditMessage({})
+  }
+  const handleShowEditMessage = (messageId) => {
+    setShowEditMessage(messageId)
+  }
+
+  const handleOpenEditMessage = (message) => {
+    if (message) {
+      setEditMessage(message)
+    } else {
+      setEditMessage({})
+    }
+  }
+
+  const removeDeletedMessage = (messageId) => {
+    setMessages((prevState) =>
+      prevState.filter((message) => message._id !== messageId)
+    )
+  }
+
   const handleSendMessage = async (message) => {
     try {
-      const response = await callPost(message, endpoint, token)
-      const newMessage = response.data
-      setMessages((prevState) => {
-        return [...prevState, newMessage]
-      })
-      return ''
+      if (editMessage._id) {
+        const response = await callPost(
+          message,
+          `chat/${chatId}/message/${editMessage._id}`,
+          token
+        )
+        const updated = response.data
+        setMessages((prevState) => {
+          return prevState.map((message) => {
+            if (message._id === updated._id) return updated
+            return message
+          })
+        })
+        setEditMessage({})
+        setShowEditMessage(false)
+      } else {
+        const response = await callPost(message, endpoint, token)
+        const newMessage = response.data
+        setMessages((prevState) => {
+          return [...prevState, newMessage]
+        })
+      }
+      return true
     } catch (error) {
-      console.log(error)
-      return message
+      return false
     }
   }
 
@@ -84,7 +124,7 @@ function MessagesScreen({ route, navigation }) {
   )
 
   return (
-    <View style={styles.pageWrapper}>
+    <Pressable style={styles.pageWrapper} onPress={handleCloseEditMessage}>
       <SafeAreaView style={styles.container}>
         <Header
           title={chatName}
@@ -125,6 +165,10 @@ function MessagesScreen({ route, navigation }) {
               }}
               renderItem={({ item, index }) => (
                 <Message
+                  showEdit={showEditMessage === item._id}
+                  setShowEdit={handleShowEditMessage}
+                  onEdit={handleOpenEditMessage}
+                  onDelete={removeDeletedMessage}
                   message={item}
                   isRepeatedAuthor={
                     index > 0
@@ -136,6 +180,7 @@ function MessagesScreen({ route, navigation }) {
             />
           )}
           <MessageInput
+            message={editMessage}
             onSubmit={handleSendMessage}
             placeholder={
               messages.length > 0 ? 'Reply...' : 'Type your message...'
@@ -143,7 +188,7 @@ function MessagesScreen({ route, navigation }) {
           />
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </View>
+    </Pressable>
   )
 }
 

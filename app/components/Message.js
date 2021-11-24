@@ -1,22 +1,47 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
 import Moment from 'react-moment'
 import colors from '../styles/colors'
 import theme from '../styles/theme'
 import { useSelector } from 'react-redux'
+import IconButton from './IconButton'
+import { callDelete } from '../api/api'
 
-function Message({ message, isRepeatedAuthor }) {
+function Message({
+  message,
+  isRepeatedAuthor,
+  showEdit,
+  setShowEdit,
+  onEdit,
+  onDelete,
+}) {
   const [showMoment, setShowMoment] = useState(false)
-  const [showEdit, setShowEdit] = useState(false)
-  const userId = useSelector((state) => state.auth.userId)
+  const { userId, token } = useSelector((state) => state.auth)
   const isByUser = userId === message.author._id
 
   const handleToggleMoment = () => {
     setShowMoment(!showMoment)
   }
 
-  const handleToggleEdit = () => {
-    setShowEdit(!showEdit)
+  const handleEdit = () => {
+    onEdit(message)
+  }
+
+  const handleDelete = () => {
+    Alert.alert('Delete message', 'Are you sure?', [
+      {
+        text: 'Yes',
+        onPress: async () => {
+          try {
+            await callDelete(`message/${message._id}`, token)
+            onDelete(message._id)
+          } catch (error) {
+            console.log(error)
+          }
+        },
+      },
+      { text: 'No', style: 'cancel' },
+    ])
   }
 
   return (
@@ -32,15 +57,35 @@ function Message({ message, isRepeatedAuthor }) {
             {message.author.username}
           </Text>
         )}
-        <Pressable
-          onPress={handleToggleMoment}
-          onLongPress={handleToggleEdit}
-          style={styles(isByUser).messageWrapper}
-        >
-          <Text style={styles().message}>{message.text}</Text>
-        </Pressable>
+        <View style={styles().longPressMsgWrapper}>
+          {showEdit && isByUser && (
+            <>
+              <IconButton
+                name="create-outline"
+                onPress={handleEdit}
+                bgColor={colors.white}
+              />
+              <IconButton
+                name="trash-outline"
+                onPress={handleDelete}
+                bgColor={colors.white}
+              />
+            </>
+          )}
+          <Pressable
+            onPress={handleToggleMoment}
+            onLongPress={() =>
+              isByUser ? setShowEdit(message._id) : handleToggleMoment()
+            }
+            style={[
+              styles(isByUser).messageWrapper,
+              showEdit && styles(isByUser).longPressMsg,
+            ]}
+          >
+            <Text style={styles().message}>{message.text}</Text>
+          </Pressable>
+        </View>
       </View>
-      {showEdit && <Text>Edit</Text>}
     </View>
   )
 }
@@ -50,6 +95,15 @@ const styles = (isByUser) =>
     container: {
       maxWidth: '70%',
       alignSelf: isByUser ? 'flex-end' : 'flex-start',
+    },
+    longPressMsgWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    longPressMsg: {
+      backgroundColor: isByUser
+        ? theme.DARKEN(colors.secondaryLight)
+        : colors.danger,
     },
     messageWrapper: {
       backgroundColor: isByUser ? colors.secondaryLight : colors.info,

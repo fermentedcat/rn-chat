@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { TextInput, StyleSheet, View, Text, Platform, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import colors from '../styles/colors'
 import theme from '../styles/theme'
 
-function MessageInput({ placeholder, onSubmit }) {
+function MessageInput({ message, placeholder, onSubmit }) {
   const [userInput, setUserInput] = useState('')
   const [inputHeight, setInputHeight] = useState(0)
   const [isValidInput, setIsValidInput] = useState(false)
+  const inputRef = useRef()
 
   const validateInput = (text) => {
     setIsValidInput(text.trim().length > 0)
@@ -24,16 +25,28 @@ function MessageInput({ placeholder, onSubmit }) {
 
   const handleSubmit = async () => {
     if (isValidInput) {
-      const resetVal = await onSubmit({text: userInput})
-      setUserInput(resetVal)
+      const reset = await onSubmit({text: userInput})
+      if (reset) {
+        setUserInput('')
+      }
     }
   }
+  
+  useEffect(() => {
+    if (message.text) {
+      handleInputChange(message.text)
+      inputRef.current.focus()
+    } else {
+      handleInputChange('')
+    }
+  }, [message])
 
   return (
     <View style={styles().container}>
       <View style={styles().inputWrapper}>
         <TextInput
           multiline={true}
+          ref={inputRef}
           style={styles(isValidInput, Math.max(40, inputHeight)).textInput}
           onChangeText={handleInputChange}
           onContentSizeChange={handleInputSizeChange}
