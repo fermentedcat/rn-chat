@@ -15,7 +15,8 @@ export const named = {
   honey: "#fdb833",
   orange: "#f4743b",
   princeton: "#FA8638",
-  macaroni: "#fcb07e"
+  macaroni: "#fcb07e",
+  transparent: "rgba(255, 255, 255, 0)",
 }
 
 export default {
@@ -40,5 +41,6 @@ export default {
   greyTransparent: named.davysGreyTransparent,
   white: named.mintCream,
   transparentWhite: named.mintCreamTransparent,
+  transparent: named.transparent,
 }
 
