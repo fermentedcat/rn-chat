@@ -3,14 +3,14 @@ import * as SecureStore from 'expo-secure-store';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { useDispatch, useSelector } from 'react-redux'
-import { callGet } from '../api/api'
+import { callGet, callPost } from '../api/api'
 import { logout } from '../store/auth-slice'
 import colors from '../styles/colors'
 
 import {
+  Alert,
   FlatList,
   Platform,
-  Pressable,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -24,18 +24,17 @@ import IconButton from '../components/IconButton'
 import Header from '../components/Header'
 import ChatForm from '../components/forms/ChatForm'
 import CustomModal from '../components/CustomModal'
+import { useNotifications } from '../hooks/use-notifications';
+import MainMenu from '../components/MainMenu';
 
 function ChatsScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
   const [subscriptions, setSubscriptions] = useState(null)
   const { userId, token } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
-
-  const handleLogout = () => {
-    SecureStore.deleteItemAsync('SNICK_SNACK_TOKEN')
-    dispatch(logout())
-  }
+  const { expoPushToken, cleanup } = useNotifications(navigation)
 
   const toggleModal = () => {
     setShowModal(!showModal)
@@ -56,9 +55,25 @@ function ChatsScreen({ navigation }) {
       const response = await callGet(`user/${userId}/subscription`, token)
       setSubscriptions(response.data)
     } catch (error) {
-      console.log(error)
+      if (error.response.status === 401) {
+        dispatch(logout())
+      } else {
+        console.log(error)
+      }
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const setPushToken = async () => {
+    const storedPushToken = await SecureStore.getItemAsync('SNICK_SNACK_PUSH_TOKEN')
+    if (storedPushToken !== expoPushToken) {
+      try {
+        await SecureStore.setItemAsync('SNICK_SNACK_PUSH_TOKEN', expoPushToken)
+        await callPost({token: expoPushToken}, 'user/pushToken', token)
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
@@ -67,14 +82,32 @@ function ChatsScreen({ navigation }) {
       fetchSubscriptions()
     }, [])
   )
+  
+  useFocusEffect(
+    useCallback(() => {
+      if (expoPushToken?.length > 0) {
+        setPushToken()
+      }
+    }, [expoPushToken])
+  )
+
+  useEffect(() => {
+    return () => cleanup()
+  }, [])
 
   return (
     <View style={styles.pageWrapper}>
       <SafeAreaView style={styles.container}>
         <Header title="Chats" logo bgColor={colors.success}>
           <ActionsBar>
-            <IconButton name="search" bgColor={colors.success}/>
-            <IconButton name="ellipsis-vertical" onPress={handleLogout} bgColor={colors.success}/>
+            <IconButton name="search" bgColor={colors.success} onPress={() => Alert.alert('Chat search not yet available...')}/>
+            <IconButton name="ellipsis-vertical" onPress={() => setShowMenu(true)} bgColor={colors.success}/>
+            {showMenu && (
+              <MainMenu
+                onClose={() => setShowMenu(false)}
+                onPressAdd={toggleModal}
+              />
+            )}
           </ActionsBar>
         </Header>
         {isLoading && <Text>Loading...</Text>}
@@ -92,7 +125,6 @@ function ChatsScreen({ navigation }) {
             )}
           />
         )}
-        <Pressable style={styles.addBtn} onPress={toggleModal}></Pressable>
       </SafeAreaView>
       <CustomModal visible={showModal} onClose={toggleModal}>
         <ChatForm onSubmit={handleChatAdded} onClose={toggleModal} />
