@@ -1,11 +1,14 @@
 import RNEventSource from 'react-native-event-source'
-import { API_BASE_URL } from 'react-native-dotenv'
+
+// not updating properly, and file seems to fall asleep at prod
+// import { API_BASE_URL } from 'react-native-dotenv'
 
 export class Sse {
   constructor(endpoint, token, callback) {
+    this.API_BASE_URL = 'https://snick-snack-api.herokuapp.com/api/'
     this.options = { headers: { 'x-auth-token': token } }
     this.eventSource = new RNEventSource(
-      `${API_BASE_URL}sse/${endpoint}`,
+      `${this.API_BASE_URL}sse/${endpoint}`,
       this.options)
 
     if (this.eventSource) {

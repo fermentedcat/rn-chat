@@ -1,6 +1,9 @@
 import axios from 'axios'
 
-import { API_BASE_URL } from 'react-native-dotenv'
+// not updating properly, and file seems to fall asleep at prod
+// import { API_BASE_URL } from 'react-native-dotenv'
+
+const API_BASE_URL = 'https://snick-snack-api.herokuapp.com/api/'
 
 export const callGet = (endpoint, token) =>
   axios({
