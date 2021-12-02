@@ -28,6 +28,7 @@ function MessageInput({ message, placeholder, onSubmit }) {
       const reset = await onSubmit({text: userInput})
       if (reset) {
         setUserInput('')
+        setIsValidInput(false)
       }
     }
   }
