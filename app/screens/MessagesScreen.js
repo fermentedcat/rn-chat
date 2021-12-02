@@ -25,6 +25,8 @@ import Spinner from '../components/Spinner'
 import { callGet, callPost } from '../api/api'
 import { useSelector } from 'react-redux'
 import ChatMenu from '../components/ChatMenu'
+import { logout } from '../store/auth-slice'
+import { useDispatch } from 'react-redux'
 
 function MessagesScreen({ route, navigation }) {
   const initialError = {
@@ -40,6 +42,7 @@ function MessagesScreen({ route, navigation }) {
   const { chatId, chatName } = route.params
   const endpoint = `chat/${chatId}/message`
   const token = useSelector((state) => state.auth.token)
+  const dispatch = useDispatch()
 
   const handleGoBack = () => {
     navigation.goBack()
@@ -97,7 +100,11 @@ function MessagesScreen({ route, navigation }) {
       }
       return true
     } catch (error) {
-      return false
+      if (error.response.status === 401) {
+        dispatch(logout())
+      } else {
+        return false
+      }
     }
   }
 
@@ -107,7 +114,11 @@ function MessagesScreen({ route, navigation }) {
       const data = response.data
       setMessages(data)
     } catch (error) {
-      setError({ type: 'danger', message: 'Failed to fetch messages.' })
+      if (error.response.status === 401) {
+        dispatch(logout())
+      } else {
+        setError({ type: 'danger', message: 'Failed to fetch messages.' })
+      }
     } finally {
       setIsLoading(false)
     }

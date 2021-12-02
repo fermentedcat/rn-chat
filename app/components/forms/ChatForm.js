@@ -45,7 +45,11 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
             await callDelete(`chat/${chatId}`, token)
             onDelete()
           } catch (error) {
-            console.log(error)
+            if (error.response.status === 401) {
+              dispatch(logout())
+            } else {
+              console.log(error)
+            }
           }
         },
       },
