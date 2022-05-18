@@ -124,10 +124,16 @@ function MessagesScreen({ route, navigation }) {
     }
   }
 
+  const addNewMessage = (newMessage) => {
+    setMessages((prevState) => {
+      return [...prevState, newMessage]
+    })
+  }
+
   useFocusEffect(
     useCallback(() => {
       fetchMessages()
-      const stream = new Sse(`chat/${chatId}/messages`, token, setMessages)
+      const stream = new Sse(`chat/${chatId}/messages`, token, addNewMessage)
       return () => {
         stream.cleanup()
       }
