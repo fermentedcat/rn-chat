@@ -4,6 +4,7 @@ import axios from 'axios'
 // import { API_BASE_URL } from 'react-native-dotenv'
 
 const API_BASE_URL = 'https://snick-snack-api.herokuapp.com/api/'
+// const API_BASE_URL = 'http://172.16.20.237:5000/api/'
 
 export const callGet = (endpoint, token) =>
   axios({
