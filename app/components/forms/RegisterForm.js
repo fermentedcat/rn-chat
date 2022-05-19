@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import * as SecureStore from 'expo-secure-store'
+import { useDispatch } from 'react-redux'
 
+import { callGet, callPost } from '../../api/api'
 import { useInput } from '../../hooks/use-input'
+import { useErrorHandler } from '../../hooks/use-error-handler'
+import { login } from '../../store/auth-slice'
 
 import {
   validateEmail,
@@ -14,9 +18,6 @@ import colors from '../../styles/colors'
 
 import { StyleSheet, View } from 'react-native'
 import CustomButton from '../CustomButton'
-import { login } from '../../store/auth-slice'
-import { useDispatch } from 'react-redux'
-import { callGet, callPost } from '../../api/api'
 import FormInput from './FormInput'
 import ProgressBar from './ProgressBar'
 
@@ -29,6 +30,7 @@ function RegisterForm() {
   const passwordConfirmInput = useInput(
     validatePasswordConfirm.bind([], passwordInput.value)
   )
+  const { alertError } = useErrorHandler()
   const [formIsValid, setFormIsValid] = useState(false)
   const [stepIsValid, setStepIsValid] = useState(false)
   const [errors, setErrors] = useState({})
@@ -92,7 +94,7 @@ function RegisterForm() {
       await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
       dispatch(login(token))
     } catch (error) {
-      console.log(error)
+      alertError()
     }
   }
 
@@ -104,17 +106,23 @@ function RegisterForm() {
         setErrors({ ...errors, username: 'This username is taken.' })
       }
     } catch (error) {
-      console.log(error)
+      alertError()
     }
   }
-
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       if (usernameInput.isValid) {
         validateUniqueUsername(usernameInput.value)
       }
-    }, 1000)
+    }, 500)
 
+    setErrors((prevState) => {
+      const temp = {...prevState}
+      delete temp.username
+      return temp
+    })
+    
     return () => {
       clearTimeout(timer)
     }

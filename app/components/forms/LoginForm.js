@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import * as SecureStore from 'expo-secure-store';
+import { useDispatch } from 'react-redux'
+import * as SecureStore from 'expo-secure-store'
 
+import { callPost } from '../../api/api'
+import { login } from '../../store/auth-slice'
 import { useInput } from '../../hooks/use-input'
-import { validateEmail, validateString } from '../../utils/validators'
+import { useErrorHandler } from '../../hooks/use-error-handler'
 
+import { validateEmail, validateString } from '../../utils/validators'
 import colors from '../../styles/colors'
 import { subHeadingText, textInput } from '../../styles/common'
 
 import { TextInput, StyleSheet, View, Text } from 'react-native'
 import CustomButton from '../CustomButton'
-import { callPost } from '../../api/api'
-import { login } from '../../store/auth-slice'
-import { useDispatch } from 'react-redux'
 
 function LoginForm(props) {
   const {
@@ -27,6 +28,7 @@ function LoginForm(props) {
     onChange: passwordOnChange,
   } = useInput(validateString)
 
+  const { handleLoginError } = useErrorHandler()
   const [formIsValid, setFormIsValid] = useState(false)
   const dispatch = useDispatch()
 
@@ -44,7 +46,7 @@ function LoginForm(props) {
       await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
       dispatch(login(token))
     } catch (error) {
-      console.log('login:', error)
+      handleLoginError(error)
     }
   }
 
@@ -65,7 +67,7 @@ function LoginForm(props) {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-        {emailInput.hasError && (
+        {emailHasError && (
           <View style={styles.errorMessageBox}>
             <Text style={[styles.text, styles.errorText]}>
               Please provide a valid email address.
@@ -94,7 +96,7 @@ function LoginForm(props) {
 const styles = StyleSheet.create({
   label: {
     ...subHeadingText,
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   container: {
     flex: 3,

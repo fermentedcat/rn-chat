@@ -10,6 +10,7 @@ import {
   textInput,
 } from '../../styles/common'
 import { useInput } from '../../hooks/use-input'
+import { useErrorHandler } from '../../hooks/use-error-handler'
 import { validateString } from '../../utils/validators'
 import { callDelete, callGet, callPost } from '../../api/api'
 
@@ -28,6 +29,7 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
   } = useInput(validateString)
 
   const { value: descriptionInput, onChange: descriptionOnChange } = useInput()
+  const { handleError } = useErrorHandler()
 
   const [isPrivate, setIsPrivate] = useState(false)
   const token = useSelector((state) => state.auth.token)
@@ -45,11 +47,11 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
             await callDelete(`chat/${chatId}`, token)
             onDelete()
           } catch (error) {
-            if (error.response.status === 401) {
-              dispatch(logout())
-            } else {
-              console.log(error)
-            }
+            const errorMessage = error.response.status === 500 ? 'You are not authorized to delete this chat.' : 'Unable to delete chat'
+            const alertBody = ['Error', errorMessage, [
+              { text: 'Ok', style: 'cancel' }
+            ]]
+            handleError(error, alertBody)
           }
         },
       },
@@ -78,7 +80,7 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
         onSubmit(updated)
       }
     } catch (error) {
-      console.log('error chat save', error)
+      handleError(error)
     }
   }
 
@@ -88,7 +90,7 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
       const data = response.data
       setChat(data)
     } catch (error) {
-      console.log(error)
+      handleError(error)
     }
   }
 

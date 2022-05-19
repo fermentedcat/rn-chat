@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react'
+import { useSelector } from 'react-redux'
 import * as SecureStore from 'expo-secure-store';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { useDispatch, useSelector } from 'react-redux'
 import { callGet, callPost } from '../api/api'
-import { logout } from '../store/auth-slice'
 import colors from '../styles/colors'
 
 import {
@@ -26,6 +25,7 @@ import ChatForm from '../components/forms/ChatForm'
 import CustomModal from '../components/CustomModal'
 import { useNotifications } from '../hooks/use-notifications';
 import MainMenu from '../components/MainMenu';
+import { useErrorHandler } from '../hooks/use-error-handler';
 
 function ChatsScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -33,12 +33,12 @@ function ChatsScreen({ navigation }) {
   const [showMenu, setShowMenu] = useState(false)
   const [subscriptions, setSubscriptions] = useState(null)
   const { userId, token } = useSelector((state) => state.auth)
-  const dispatch = useDispatch()
   
   const navigateToChat = (chatId, chatName) => {
     navigation.navigate('Messages', { chatId, chatName })
   }
   const { expoPushToken, cleanup } = useNotifications(navigateToChat)
+  const { handleError } = useErrorHandler()
   
   const toggleModal = () => {
     setShowModal(!showModal)
@@ -56,11 +56,7 @@ function ChatsScreen({ navigation }) {
       const response = await callGet(`user/${userId}/subscription`, token)
       setSubscriptions(response.data)
     } catch (error) {
-      if (error.response.status === 401) {
-        dispatch(logout())
-      } else {
-        console.log(error)
-      }
+      handleError(error)
     } finally {
       setIsLoading(false)
     }
@@ -73,7 +69,10 @@ function ChatsScreen({ navigation }) {
         await SecureStore.setItemAsync('SNICK_SNACK_PUSH_TOKEN', expoPushToken)
         await callPost({token: expoPushToken}, 'user/pushToken', token)
       } catch (error) {
-        console.log(error)
+        const alertBody = ['Push notification error', 'An error occurred setting your push notifications.', [
+          { text: 'Ok', style: 'cancel' }
+        ]]
+        handleError(error, alertBody)
       }
     }
   }
