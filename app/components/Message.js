@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
+import { useSelector } from 'react-redux'
 import Moment from 'react-moment'
+
+import { callDelete } from '../api/api'
+import { useErrorHandler } from '../hooks/use-error-handler'
+
 import colors from '../styles/colors'
 import theme from '../styles/theme'
-import { useSelector } from 'react-redux'
+
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
 import IconButton from './IconButton'
-import { callDelete } from '../api/api'
 
 function Message({
   message,
@@ -17,6 +21,7 @@ function Message({
 }) {
   const [showMoment, setShowMoment] = useState(false)
   const { userId, token } = useSelector((state) => state.auth)
+  const { handleError } = useErrorHandler()
   const isByUser = userId === message.author._id
 
   const handleToggleMoment = () => {
@@ -36,7 +41,7 @@ function Message({
             await callDelete(`message/${message._id}`, token)
             onDelete(message._id)
           } catch (error) {
-            console.log(error)
+            handleError(error)
           }
         },
       },

@@ -1,10 +1,12 @@
 import React, { useCallback, useState } from 'react'
-
+import { useSelector } from 'react-redux'
 import { useFocusEffect } from '@react-navigation/native'
+
+import { callGet, callPost } from '../api/api'
 import { Sse } from '../api/sse'
+import { useErrorHandler } from '../hooks/use-error-handler'
 
 import colors from '../styles/colors'
-
 import {
   SafeAreaView,
   StyleSheet,
@@ -22,18 +24,9 @@ import IconButton from '../components/IconButton'
 import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
 import Spinner from '../components/Spinner'
-import { callGet, callPost } from '../api/api'
-import { useSelector } from 'react-redux'
 import ChatMenu from '../components/ChatMenu'
-import { logout } from '../store/auth-slice'
-import { useDispatch } from 'react-redux'
 
 function MessagesScreen({ route, navigation }) {
-  const initialError = {
-    type: null,
-    message: null,
-  }
-  const [error, setError] = useState(initialError)
   const [isLoading, setIsLoading] = useState(true)
   const [showMenu, setShowMenu] = useState(false)
   const [showEditMessage, setShowEditMessage] = useState('')
@@ -42,7 +35,7 @@ function MessagesScreen({ route, navigation }) {
   const { chatId, chatName } = route.params
   const endpoint = `chat/${chatId}/message`
   const token = useSelector((state) => state.auth.token)
-  const dispatch = useDispatch()
+  const { handleError } = useErrorHandler()
 
   const handleGoBack = () => {
     navigation.goBack()
@@ -100,11 +93,11 @@ function MessagesScreen({ route, navigation }) {
       }
       return true
     } catch (error) {
-      if (error.response.status === 401) {
-        dispatch(logout())
-      } else {
-        return false
-      }
+      const alertBody = ['Could not send message', 'An error occurred sending your message. Please reload the app and try again.', [
+        { text: 'Ok', style: 'cancel' }
+      ]]
+      handleError(error, alertBody)
+      return false
     }
   }
 
@@ -114,11 +107,10 @@ function MessagesScreen({ route, navigation }) {
       const data = response.data
       setMessages(data)
     } catch (error) {
-      if (error.response.status === 401) {
-        dispatch(logout())
-      } else {
-        setError({ type: 'danger', message: 'Failed to fetch messages.' })
-      }
+      const alertBody = ['Failed to fetch messages', 'An error occurred fetching your messages. Please exit the chat and try again.', [
+        { text: 'Ok', style: 'cancel' }
+      ]]
+      handleError(error, alertBody)
     } finally {
       setIsLoading(false)
     }

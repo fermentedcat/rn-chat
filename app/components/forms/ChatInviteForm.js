@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text, TextInput, FlatList } from 'react-native'
 import { useSelector } from 'react-redux'
+
 import { callGet, callPost } from '../../api/api'
+import { useErrorHandler } from '../../hooks/use-error-handler'
 import { useInput } from '../../hooks/use-input'
+import { validateString } from '../../utils/validators'
 import colors from '../../styles/colors'
+
 import {
   formWrapper,
   headingText,
   subHeadingText,
   textInput,
 } from '../../styles/common'
-import { validateString } from '../../utils/validators'
 import CustomButton from '../CustomButton'
 import CustomOutlineButton from '../CustomOutlineButton'
 
 function ChatInviteForm({ chatId, onClose }) {
   const token = useSelector((state) => state.auth.token)
   const { value, isValid, onChange, onBlur } = useInput(validateString)
+  const { handleError } = useErrorHandler()
   const [subsribers, setSubscribers] = useState([])
   const [users, setUsers] = useState([])
   const [chosenUsers, setChosenUsers] = useState([])
@@ -61,7 +65,11 @@ function ChatInviteForm({ chatId, onClose }) {
       )
       onClose()
     } catch (error) {
-      setError({ type: 'danger', message: 'Could not send invites.' })
+      const errorMessage = error.response.status === 500 ? 'You are not authorized to send invites.' : 'Could not send invites. Please reload and try again.'
+      const alertBody = ['Error', errorMessage, [
+        { text: 'Ok', style: 'cancel' }
+      ]]
+      handleError(error, alertBody)
     }
   }
 
@@ -93,7 +101,7 @@ function ChatInviteForm({ chatId, onClose }) {
       const data = response.data
       setSubscribers(data)
     } catch (error) {
-      console.log(error)
+      handleError(error)
     }
   }
 

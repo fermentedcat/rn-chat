@@ -6,6 +6,23 @@ export const useErrorHandler = () => {
 
   const dispatch = useDispatch()
 
+  const alertError = (alertBody) => {
+    const body = alertBody || ['Error', 'An error occurred. Please reload the app and try again.', [
+      { text: 'Ok', style: 'cancel' }
+    ]]
+    Alert.alert(...body)
+  }
+
+  const handleLoginError = (error) => {
+    if (error.response.status === 401) {
+      Alert.alert('Login failed', 'Email and password do not match.', [
+        { text: 'Ok', style: 'cancel' }
+      ])
+      return
+    }
+    alertError()
+  }
+  
   const handleError = (error, alertBody) => {
     if (error.response.status === 401) {
       Alert.alert('You were logged out', 'Please log in again.', [
@@ -13,14 +30,14 @@ export const useErrorHandler = () => {
       ])
       return
     }
-    const body = alertBody || ['Error', 'An error occurred. Please reload the app and try again.', [
-      { text: 'Ok', style: 'cancel' }
-    ]]
-    Alert.alert(...body)
+    alertError(alertBody)
   }
 
 
+
   return {
-    handleError
+    alertError,
+    handleError,
+    handleLoginError,
   }
 }
