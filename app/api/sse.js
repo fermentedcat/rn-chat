@@ -6,7 +6,6 @@ import RNEventSource from 'react-native-event-source'
 export class Sse {
   constructor(endpoint, token, callback) {
     this.API_BASE_URL = 'https://snick-snack-api.herokuapp.com/api/'
-    // this.API_BASE_URL = 'http://172.16.20.237:5000/api/'
     this.options = { headers: { 'x-auth-token': token } }
     this.eventSource = new RNEventSource(
       `${this.API_BASE_URL}sse/${endpoint}`,
