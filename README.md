@@ -9,7 +9,7 @@ Expo preview: [Snick Snack](exp://exp.host/@fermentedcat/snick-snack)
 
 
 ## Key features
-- Live streamed message updates with Server Side Rendering (SSE)
+- Live streamed message updates with Server Sent Events (SSE)
 - Push notifications using the [Expo Notifications API](https://docs.expo.dev/versions/latest/sdk/notifications/)
 
 - Register & login
@@ -49,7 +49,7 @@ Connected to a Node.js server for authentication and data handling: https://gith
 ## Todo (backlog):
 
 - Live update chat rooms list with SSE & push notifications
-- Search chats
+- Search for chats to join
 - Show unread messages on chat in chat list
 - Show user profile
 - Edit user info
