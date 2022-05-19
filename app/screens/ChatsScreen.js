@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import * as SecureStore from 'expo-secure-store';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -34,20 +34,21 @@ function ChatsScreen({ navigation }) {
   const [subscriptions, setSubscriptions] = useState(null)
   const { userId, token } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
-  const { expoPushToken, cleanup } = useNotifications(navigation)
-
+  
+  const navigateToChat = (chatId, chatName) => {
+    navigation.navigate('Messages', { chatId, chatName })
+  }
+  const { expoPushToken, cleanup } = useNotifications(navigateToChat)
+  
   const toggleModal = () => {
     setShowModal(!showModal)
   }
-
+  
   const handleChatAdded = (newChat) => {
     setSubscriptions((prevState) => {
       return [...prevState, { chat: newChat }]
     })
-    navigation.navigate('Messages', {
-      chatId: newChat._id,
-      chatName: newChat.title,
-    })
+    navigateToChat(newChat._id, newChat.title)
   }
 
   const fetchSubscriptions = async () => {
@@ -88,12 +89,9 @@ function ChatsScreen({ navigation }) {
       if (expoPushToken?.length > 0) {
         setPushToken()
       }
+      return () => cleanup()
     }, [expoPushToken])
   )
-
-  useEffect(() => {
-    return () => cleanup()
-  }, [])
 
   return (
     <View style={styles.pageWrapper}>

@@ -8,17 +8,19 @@ Notifications.setNotificationHandler({
     shouldPlaySound: false,
     shouldSetBadge: false,
   }),
-});
+})
 
-export const useNotifications = (callback) => {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-  
+export const useNotifications = (onOpen) => {
+  const [expoPushToken, setExpoPushToken] = useState('')
+  const [notification, setNotification] = useState(false)
+  const notificationListener = useRef()
+  const responseListener = useRef()
+
   const registerForPushNotificationsAsync = async () => {
+    let token
     if (Constants.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync()
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync()
       let finalStatus = existingStatus
       if (existingStatus !== 'granted') {
         const { status } = await Notifications.requestPermissionsAsync()
@@ -28,10 +30,9 @@ export const useNotifications = (callback) => {
         alert('Failed to get push token for push notification!')
         return
       }
-      const token = (await Notifications.getExpoPushTokenAsync()).data
-      return token
+      token = (await Notifications.getExpoPushTokenAsync()).data
     }
-  
+    
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
@@ -40,27 +41,34 @@ export const useNotifications = (callback) => {
         lightColor: '#FF231F7C',
       })
     }
+
+    return token
   }
 
   const cleanup = () => {
-    Notifications.removeNotificationSubscription(notificationListener.current);
-    Notifications.removeNotificationSubscription(responseListener.current);
+    Notifications.removeNotificationSubscription(notificationListener.current)
+    Notifications.removeNotificationSubscription(responseListener.current)
   }
-  
+
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-  
-    // This listener is fired whenever a notification is received while the app is foregrounded
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-  
-    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log("response",response); // här öppnas meddelandet om man trycker på notifikationen om appen är stängd
-    });
-  }, []);
-  
+    registerForPushNotificationsAsync().then((token) => setExpoPushToken(token))
+    
+
+    // fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification)
+      })
+
+    // fires when the user taps on a notification (works when app is foregrounded, backgrounded, or killed)
+    // click on notification opens the chat
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const { chatId, chatName } = response.notification.request.content.data
+        onOpen(chatId, chatName)
+      })
+  }, [])
+
   return {
     expoPushToken,
     cleanup
