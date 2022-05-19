@@ -160,9 +160,6 @@ function MessagesScreen({ route, navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : null}
         >
           {isLoading && <Spinner />}
-          {error.message && (
-            <Text style={{ padding: 50 }}>{error.message}</Text>
-          )}
           {messages.length > 0 && (
             <FlatList
               data={messages}
