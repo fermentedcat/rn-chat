@@ -13,12 +13,12 @@ import IconButton from './IconButton'
 
 function ChatMenu({ chatId, onClose, navigation }) {
   const handleGoToEdit = () => {
-    navigation.navigate('Edit', { type: 'chat', prop: chatId })
+    navigation.navigate('Edit', { chatId })
     onClose()
   }
   
   const handleGoToInvite = () => {
-    navigation.navigate('Edit', { type: 'invite', prop: chatId })
+    navigation.navigate('Invite', { chatId })
     onClose()
   }
 
