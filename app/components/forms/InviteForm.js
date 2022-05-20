@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text, TextInput, FlatList } from 'react-native'
 import { useSelector } from 'react-redux'
 
-import { callGet, callPost } from '../../api/api'
+import { addChatSubscriptions, fetchChatSubscriptions } from '../../api/chat'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 import { useInput } from '../../hooks/use-input'
 import { validateString } from '../../utils/validators'
@@ -16,8 +16,9 @@ import {
 } from '../../styles/common'
 import CustomButton from '../CustomButton'
 import CustomOutlineButton from '../CustomOutlineButton'
+import { searchAllByUsername } from '../../api/user'
 
-function ChatInviteForm({ chatId, onClose }) {
+function InviteForm({ chatId, onClose }) {
   const token = useSelector((state) => state.auth.token)
   const { value, isValid, onChange, onBlur } = useInput(validateString)
   const { handleError } = useErrorHandler()
@@ -30,17 +31,18 @@ function ChatInviteForm({ chatId, onClose }) {
   }
   const [error, setError] = useState(initialError)
 
+  const toggleChooseUser = (user) => {
+    const isChosen = chosenUsers.some((chosen) => chosen._id === user._id)
+    isChosen ? handleUnchooseUser(user) : handleChooseUser(user)
+  }
+
   const handleChooseUser = (user) => {
-    if (!chosenUsers.some((chosen) => chosen._id === user._id)) {
-      setChosenUsers((prevState) => {
-        return [...prevState, user]
-      })
-      setUsers((prevState) => {
-        return prevState.filter((fetched) => fetched._id !== user._id)
-      })
-    } else {
-      handleUnchooseUser(user)
-    }
+    setChosenUsers((prevState) => {
+      return [...prevState, user]
+    })
+    setUsers((prevState) => {
+      return prevState.filter((fetched) => fetched._id !== user._id)
+    })
   }
 
   const handleUnchooseUser = (user) => {
@@ -54,18 +56,10 @@ function ChatInviteForm({ chatId, onClose }) {
 
   const handleSendInvites = async () => {
     try {
-      await Promise.all(
-        chosenUsers.map(async (chosen) => {
-          await callPost(
-            {},
-            `chat/${chatId}/user/${chosen._id}/subscription`,
-            token
-          )
-        })
-      )
+      await addChatSubscriptions(chatId, chosenUsers, token)
       onClose()
     } catch (error) {
-      const errorMessage = error.response.status === 500 ? 'You are not authorized to send invites.' : 'Could not send invites. Please reload and try again.'
+      const errorMessage = error.response?.status === 500 ? 'You are not authorized to send invites.' : 'Could not send invites. Please reload and try again.'
       const alertBody = ['Error', errorMessage, [
         { text: 'Ok', style: 'cancel' }
       ]]
@@ -75,8 +69,7 @@ function ChatInviteForm({ chatId, onClose }) {
 
   const fetchUsers = async () => {
     try {
-      const response = await callGet(`user/search-all/${value}`)
-      const data = response.data
+      const data = await searchAllByUsername(value)
       if (data.length <= 0) {
         setError({ type: 'info', message: 'No users found.' })
       }
@@ -97,8 +90,7 @@ function ChatInviteForm({ chatId, onClose }) {
 
   const fetchSubscribers = async () => {
     try {
-      const response = await callGet(`chat/${chatId}/subscription/`, token)
-      const data = response.data
+      const data = await fetchChatSubscriptions(chatId, token)
       setSubscribers(data)
     } catch (error) {
       handleError(error)
@@ -106,6 +98,7 @@ function ChatInviteForm({ chatId, onClose }) {
   }
 
   useEffect(() => {
+    // search for users when user has stopped typing
     const timer = setTimeout(() => {
       setError(initialError)
       if (isValid) {
@@ -148,7 +141,7 @@ function ChatInviteForm({ chatId, onClose }) {
         renderItem={({ item, index }) => (
           <CustomOutlineButton
             title={item.username}
-            onPress={() => handleChooseUser(item)}
+            onPress={() => toggleChooseUser(item)}
             outline={
               chosenUsers.some((user) => user._id === item._id)
                 ? colors.primary
@@ -225,4 +218,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ChatInviteForm
+export default InviteForm
