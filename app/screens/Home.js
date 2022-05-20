@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import * as SecureStore from 'expo-secure-store'
-
 import { useSelector, useDispatch } from 'react-redux'
+
+import { getStoreAuthToken } from '../api/securestore'
 import { authenticateToken } from '../store/auth-slice'
 
 import { View } from 'react-native'
@@ -12,7 +12,7 @@ function Home({ navigation }) {
   const dispatch = useDispatch()
 
   const getToken = async () => {
-    const token = await SecureStore.getItemAsync('SNICK_SNACK_TOKEN')
+    const token = await getStoreAuthToken()
     if (token) {
       dispatch(authenticateToken(token))
     }

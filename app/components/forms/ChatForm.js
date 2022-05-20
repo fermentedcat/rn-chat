@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { useSelector } from 'react-redux'
 
+import { addNewChat, deleteChat, getChatById, updateChat } from '../../api/chat'
 import colors from '../../styles/colors'
 import {
   formWrapper,
@@ -12,7 +13,6 @@ import {
 import { useInput } from '../../hooks/use-input'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 import { validateString } from '../../utils/validators'
-import { callDelete, callGet, callPost } from '../../api/api'
 
 import { Text, TextInput, View, StyleSheet, Switch, Alert } from 'react-native'
 import CustomButton from '../CustomButton'
@@ -44,10 +44,10 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
         text: 'Yes',
         onPress: async () => {
           try {
-            await callDelete(`chat/${chatId}`, token)
+            await deleteChat(chatId, token)
             onDelete()
           } catch (error) {
-            const errorMessage = error.response.status === 500 ? 'You are not authorized to delete this chat.' : 'Unable to delete chat'
+            const errorMessage = error.response?.status === 500 ? 'You are not authorized to delete this chat.' : 'Unable to delete chat'
             const alertBody = ['Error', errorMessage, [
               { text: 'Ok', style: 'cancel' }
             ]]
@@ -70,13 +70,11 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
     }
     try {
       if (!chatId) {
-        const response = await callPost(chatData, 'chat', token)
-        const newChat = response.data
+        const newChat = await addNewChat(chatData, token)
         onSubmit(newChat)
         onClose()
       } else {
-        const response = await callPost(chatData, `chat/${chatId}`, token)
-        const updated = response.data
+        const updated = await updateChat(chatData, chatId, token)
         onSubmit(updated)
       }
     } catch (error) {
@@ -86,8 +84,7 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
 
   const getChat = async () => {
     try {
-      const response = await callGet(`chat/${chatId}`, token)
-      const data = response.data
+      const data = await getChatById(chatId, token)
       setChat(data)
     } catch (error) {
       handleError(error)

@@ -50,8 +50,6 @@ const styles = StyleSheet.create({
   finished: {
     backgroundColor: colors.info,
     borderColor: colors.info,
-    // opacity: 0.5,
-    // color: colors.white,
   },
   current: {
     backgroundColor: colors.white,

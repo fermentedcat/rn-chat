@@ -2,15 +2,18 @@ import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFocusEffect } from '@react-navigation/native'
 
-import { callGet, callPost } from '../api/api'
 import { Sse } from '../api/sse'
+import {
+  addNewChatMessage,
+  getChatMessages,
+  updateChatMessage,
+} from '../api/message'
 import { useErrorHandler } from '../hooks/use-error-handler'
 
 import colors from '../styles/colors'
 import {
   SafeAreaView,
   StyleSheet,
-  Text,
   FlatList,
   StatusBar,
   Platform,
@@ -33,7 +36,6 @@ function MessagesScreen({ route, navigation }) {
   const [messages, setMessages] = useState([])
   const [editMessage, setEditMessage] = useState({})
   const { chatId, chatName } = route.params
-  const endpoint = `chat/${chatId}/message`
   const token = useSelector((state) => state.auth.token)
   const { handleError } = useErrorHandler()
 
@@ -70,12 +72,12 @@ function MessagesScreen({ route, navigation }) {
   const handleSendMessage = async (message) => {
     try {
       if (editMessage._id) {
-        const response = await callPost(
+        const updated = await updateChatMessage(
           message,
-          `chat/${chatId}/message/${editMessage._id}`,
+          chatId,
+          editMessage._id,
           token
         )
-        const updated = response.data
         setMessages((prevState) => {
           return prevState.map((message) => {
             if (message._id === updated._id) return updated
@@ -85,17 +87,18 @@ function MessagesScreen({ route, navigation }) {
         setEditMessage({})
         setShowEditMessage(false)
       } else {
-        const response = await callPost(message, endpoint, token)
-        const newMessage = response.data
+        const newMessage = await addNewChatMessage(message, chatId, token)
         setMessages((prevState) => {
           return [...prevState, newMessage]
         })
       }
       return true
     } catch (error) {
-      const alertBody = ['Could not send message', 'An error occurred sending your message. Please reload the app and try again.', [
-        { text: 'Ok', style: 'cancel' }
-      ]]
+      const alertBody = [
+        'Could not send message',
+        'An error occurred sending your message. Please reload the app and try again.',
+        [{ text: 'Ok', style: 'cancel' }],
+      ]
       handleError(error, alertBody)
       return false
     }
@@ -103,13 +106,14 @@ function MessagesScreen({ route, navigation }) {
 
   const fetchMessages = async () => {
     try {
-      const response = await callGet(endpoint, token)
-      const data = response.data
+      const data = await getChatMessages(chatId, token)
       setMessages(data)
     } catch (error) {
-      const alertBody = ['Failed to fetch messages', 'An error occurred fetching your messages. Please exit the chat and try again.', [
-        { text: 'Ok', style: 'cancel' }
-      ]]
+      const alertBody = [
+        'Failed to fetch messages',
+        'An error occurred fetching your messages. Please exit the chat and try again.',
+        [{ text: 'Ok', style: 'cancel' }],
+      ]
       handleError(error, alertBody)
     } finally {
       setIsLoading(false)
