@@ -14,7 +14,7 @@ export const useErrorHandler = () => {
   }
 
   const handleLoginError = (error) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       Alert.alert('Login failed', 'Email and password do not match.', [
         { text: 'Ok', style: 'cancel' }
       ])
@@ -24,7 +24,7 @@ export const useErrorHandler = () => {
   }
   
   const handleError = (error, alertBody) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       Alert.alert('You were logged out', 'Please log in again.', [
         { text: 'Ok', onPress: () => dispatch(logout()) }
       ])

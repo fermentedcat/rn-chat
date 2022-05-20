@@ -1,6 +1,6 @@
 import React from 'react'
 import EditWrapper from '../components/EditWrapper'
-import ChatInviteForm from '../components/forms/ChatInviteForm'
+import InviteForm from '../components/forms/InviteForm'
 
 function InviteScreen({ route, navigation }) {
   const { chatId } = route.params
@@ -11,7 +11,7 @@ function InviteScreen({ route, navigation }) {
 
   return (
     <EditWrapper>
-      <ChatInviteForm chatId={chatId} onClose={handleGoBack} />
+      <InviteForm chatId={chatId} onClose={handleGoBack} />
     </EditWrapper>
   )
 }

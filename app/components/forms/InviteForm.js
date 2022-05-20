@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text, TextInput, FlatList } from 'react-native'
 import { useSelector } from 'react-redux'
 
-import { callGet, callPost } from '../../api/api'
+import { addChatSubscriptions, fetchChatSubscriptions } from '../../api/chat'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 import { useInput } from '../../hooks/use-input'
 import { validateString } from '../../utils/validators'
@@ -16,56 +16,49 @@ import {
 } from '../../styles/common'
 import CustomButton from '../CustomButton'
 import CustomOutlineButton from '../CustomOutlineButton'
+import { searchAllByUsername } from '../../api/user'
 
-function ChatInviteForm({ chatId, onClose }) {
+function InviteForm({ chatId, onClose }) {
   const token = useSelector((state) => state.auth.token)
   const { value, isValid, onChange, onBlur } = useInput(validateString)
   const { handleError } = useErrorHandler()
-  const [subsribers, setSubscribers] = useState([])
+  const [subscriptions, setSubscriptions] = useState([])
   const [users, setUsers] = useState([])
-  const [chosenUsers, setChosenUsers] = useState([])
   const initialError = {
     type: null,
     message: null,
   }
   const [error, setError] = useState(initialError)
 
-  const handleChooseUser = (user) => {
-    if (!chosenUsers.some((chosen) => chosen._id === user._id)) {
-      setChosenUsers((prevState) => {
-        return [...prevState, user]
-      })
-      setUsers((prevState) => {
-        return prevState.filter((fetched) => fetched._id !== user._id)
-      })
-    } else {
-      handleUnchooseUser(user)
-    }
+  const toggleChooseUser = (index) => {
+    setUsers((prevState) => {
+      const updated = [...prevState]
+      updated[index].chosen = !updated[index].chosen
+      return updated
+    })
   }
 
-  const handleUnchooseUser = (user) => {
-    setUsers((prevState) => {
-      return [...prevState, user]
-    })
-    setChosenUsers((prevState) => {
-      return prevState.filter((chosen) => chosen._id !== user._id)
+  const getChosenUsers = () => {
+    return users.filter((user) => user.chosen)
+  }
+
+  const filterNewUsers = (chosen, users) => {
+    // remove all users who are already subsribers and selected to invite
+    return users.filter((user) => {
+      return (
+        !chosen.some((chosenUser) => chosenUser._id === user._id) &&
+        !subscriptions.some((doc) => doc.user === user._id)
+      )
     })
   }
 
   const handleSendInvites = async () => {
     try {
-      await Promise.all(
-        chosenUsers.map(async (chosen) => {
-          await callPost(
-            {},
-            `chat/${chatId}/user/${chosen._id}/subscription`,
-            token
-          )
-        })
-      )
+      const chosen = getChosenUsers()
+      await addChatSubscriptions(chatId, chosen, token)
       onClose()
     } catch (error) {
-      const errorMessage = error.response.status === 500 ? 'You are not authorized to send invites.' : 'Could not send invites. Please reload and try again.'
+      const errorMessage = error.response?.status === 500 ? 'You are not authorized to send invites.' : 'Could not send invites. Please reload and try again.'
       const alertBody = ['Error', errorMessage, [
         { text: 'Ok', style: 'cancel' }
       ]]
@@ -75,18 +68,13 @@ function ChatInviteForm({ chatId, onClose }) {
 
   const fetchUsers = async () => {
     try {
-      const response = await callGet(`user/search-all/${value}`)
-      const data = response.data
+      const data = await searchAllByUsername(value)
       if (data.length <= 0) {
         setError({ type: 'info', message: 'No users found.' })
       }
-      const filtered = data.filter((user) => {
-        return (
-          !chosenUsers.some((chosen) => chosen._id === user._id) &&
-          !subsribers.some((doc) => doc.user === user._id)
-        )
-      })
-      setUsers(filtered)
+      const chosen = getChosenUsers()
+      const filtered = filterNewUsers(chosen, data)
+      setUsers([...chosen, ...filtered])
     } catch (error) {
       setError({
         type: 'danger',
@@ -95,23 +83,24 @@ function ChatInviteForm({ chatId, onClose }) {
     }
   }
 
-  const fetchSubscribers = async () => {
+  const fetchSubscriptions = async () => {
     try {
-      const response = await callGet(`chat/${chatId}/subscription/`, token)
-      const data = response.data
-      setSubscribers(data)
+      const data = await fetchChatSubscriptions(chatId, token)
+      setSubscriptions(data)
     } catch (error) {
       handleError(error)
     }
   }
 
   useEffect(() => {
+    // search for users when user has stopped typing
     const timer = setTimeout(() => {
       setError(initialError)
       if (isValid) {
         fetchUsers()
       } else {
-        setUsers([])
+        const chosen = getChosenUsers()
+        setUsers(chosen)
       }
     }, 400)
     return () => {
@@ -120,7 +109,7 @@ function ChatInviteForm({ chatId, onClose }) {
   }, [value])
 
   useEffect(() => {
-    fetchSubscribers()
+    fetchSubscriptions()
   }, [])
 
   return (
@@ -141,27 +130,27 @@ function ChatInviteForm({ chatId, onClose }) {
       </View>
 
       <FlatList
-        data={[...chosenUsers, ...users]}
+        data={users}
         numColumns={2}
         keyExtractor={(item) => item._id}
         style={styles.usersList}
         renderItem={({ item, index }) => (
           <CustomOutlineButton
             title={item.username}
-            onPress={() => handleChooseUser(item)}
+            onPress={() => toggleChooseUser(index)}
             outline={
-              chosenUsers.some((user) => user._id === item._id)
+              item.chosen
                 ? colors.primary
                 : colors.secondary
             }
-            checked={chosenUsers.some((user) => user._id === item._id)}
+            checked={item.chosen}
           />
         )}
       />
       <View>
-        {chosenUsers.length > 0 && (
+        {getChosenUsers().length > 0 && (
           <CustomButton
-            title={chosenUsers.length > 1 ? 'Send invites' : 'Send invite'}
+            title={getChosenUsers().length > 1 ? 'Send invites' : 'Send invite'}
             onPress={handleSendInvites}
             bgColor={colors.primary}
           />
@@ -225,4 +214,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ChatInviteForm
+export default InviteForm
