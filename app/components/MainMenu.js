@@ -1,7 +1,7 @@
 import React from 'react'
-import * as SecureStore from 'expo-secure-store';
 import { useDispatch } from 'react-redux';
 
+import { deleteStoreAuthToken, deleteStorePushToken } from '../api/securestore';
 import { logout } from '../store/auth-slice'
 import colors from '../styles/colors'
 import { headingText, subHeadingText } from '../styles/common'
@@ -18,8 +18,9 @@ import IconButton from './IconButton'
 
 function MainMenu({ onClose, onPressAdd }) {
   const dispatch = useDispatch()
-  const handleLogout = () => {
-    SecureStore.deleteItemAsync('SNICK_SNACK_TOKEN')
+  const handleLogout = async () => {
+    await deleteStoreAuthToken()
+    await deleteStorePushToken()
     dispatch(logout())
   }
   

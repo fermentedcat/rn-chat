@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import * as SecureStore from 'expo-secure-store'
 
-import { callPost } from '../../api/api'
+import { authenticateUser } from '../../api/user'
+import { setStoreAuthToken } from '../../api/securestore'
 import { login } from '../../store/auth-slice'
 import { useInput } from '../../hooks/use-input'
 import { useErrorHandler } from '../../hooks/use-error-handler'
@@ -14,7 +14,7 @@ import { subHeadingText, textInput } from '../../styles/common'
 import { TextInput, StyleSheet, View, Text } from 'react-native'
 import CustomButton from '../CustomButton'
 
-function LoginForm(props) {
+function LoginForm() {
   const {
     value: emailInput,
     isValid: emailIsValid,
@@ -41,9 +41,8 @@ function LoginForm(props) {
       password: passwordInput,
     }
     try {
-      const response = await callPost(userData, 'user/login')
-      const token = response.data
-      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
+      const token = await authenticateUser(userData)
+      await setStoreAuthToken(token)
       dispatch(login(token))
     } catch (error) {
       handleLoginError(error)

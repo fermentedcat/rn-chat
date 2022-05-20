@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
-import * as SecureStore from 'expo-secure-store';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { callGet, callPost } from '../api/api'
+import { getStorePushToken, setStorePushToken } from '../api/securestore';
+import { getUserSubscriptions, setUserPushToken } from '../api/user';
 import colors from '../styles/colors'
 
 import {
@@ -53,8 +53,8 @@ function ChatsScreen({ navigation }) {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await callGet(`user/${userId}/subscription`, token)
-      setSubscriptions(response.data)
+      const data = await getUserSubscriptions(userId, token)
+      setSubscriptions(data)
     } catch (error) {
       handleError(error)
     } finally {
@@ -63,11 +63,11 @@ function ChatsScreen({ navigation }) {
   }
 
   const setPushToken = async () => {
-    const storedPushToken = await SecureStore.getItemAsync('SNICK_SNACK_PUSH_TOKEN')
+    const storedPushToken = await getStorePushToken()
     if (storedPushToken !== expoPushToken) {
       try {
-        await SecureStore.setItemAsync('SNICK_SNACK_PUSH_TOKEN', expoPushToken)
-        await callPost({token: expoPushToken}, 'user/pushToken', token)
+        await setStorePushToken(expoPushToken)
+        await setUserPushToken(expoPushToken, token)
       } catch (error) {
         const alertBody = ['Push notification error', 'An error occurred setting your push notifications.', [
           { text: 'Ok', style: 'cancel' }

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import Moment from 'react-moment'
 
-import { callDelete } from '../api/api'
+import { deleteChatMessage } from '../api/message'
 import { useErrorHandler } from '../hooks/use-error-handler'
 
 import colors from '../styles/colors'
@@ -38,7 +38,7 @@ function Message({
         text: 'Yes',
         onPress: async () => {
           try {
-            await callDelete(`message/${message._id}`, token)
+            await deleteChatMessage(message._id, token)
             onDelete(message._id)
           } catch (error) {
             handleError(error)

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import * as SecureStore from 'expo-secure-store'
 import { useDispatch } from 'react-redux'
 
-import { callGet, callPost } from '../../api/api'
+import { addNewUser, getUserByUsername } from '../../api/user'
+import { setStoreAuthToken } from '../../api/securestore'
 import { useInput } from '../../hooks/use-input'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 import { login } from '../../store/auth-slice'
@@ -89,9 +89,8 @@ function RegisterForm() {
       password: passwordInput.value,
     }
     try {
-      const response = await callPost(userData, 'user')
-      const token = response.data
-      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
+      const token = await addNewUser(userData)
+      await setStoreAuthToken(token)
       dispatch(login(token))
     } catch (error) {
       alertError()
@@ -100,8 +99,7 @@ function RegisterForm() {
 
   const validateUniqueUsername = async (username) => {
     try {
-      const response = await callGet(`user/search/${username}`)
-      const user = response.data
+      const user = await getUserByUsername(username)
       if (user) {
         setErrors({ ...errors, username: 'This username is taken.' })
       }
