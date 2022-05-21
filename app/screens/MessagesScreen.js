@@ -21,13 +21,13 @@ import {
   Pressable,
 } from 'react-native'
 
-import Header from '../components/Header'
+import Header from '../components/layout/Header'
 import ActionsBar from '../components/ActionsBar'
-import IconButton from '../components/IconButton'
+import IconButton from '../components/buttons/IconButton'
 import Message from '../components/Message'
-import MessageInput from '../components/MessageInput'
+import MessageInput from '../components/inputs/MessageInput'
 import Spinner from '../components/Spinner'
-import ChatMenu from '../components/ChatMenu'
+import ChatMenu from '../components/menus/ChatMenu'
 
 function MessagesScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -88,9 +88,7 @@ function MessagesScreen({ route, navigation }) {
         setShowEditMessage(false)
       } else {
         const newMessage = await addNewChatMessage(message, chatId, token)
-        setMessages((prevState) => {
-          return [...prevState, newMessage]
-        })
+        addNewMessage(newMessage)
       }
       return true
     } catch (error) {
@@ -107,7 +105,7 @@ function MessagesScreen({ route, navigation }) {
   const fetchMessages = async () => {
     try {
       const data = await getChatMessages(chatId, token)
-      setMessages(data)
+      setMessages(data.reverse())
     } catch (error) {
       const alertBody = [
         'Failed to fetch messages',
@@ -122,7 +120,7 @@ function MessagesScreen({ route, navigation }) {
 
   const addNewMessage = (newMessage) => {
     setMessages((prevState) => {
-      return [...prevState, newMessage]
+      return [newMessage, ...prevState]
     })
   }
 
@@ -170,9 +168,6 @@ function MessagesScreen({ route, navigation }) {
               keyExtractor={(item) => item._id}
               inverted
               style={styles.messageList}
-              contentContainerStyle={{
-                flexDirection: 'column-reverse',
-              }}
               renderItem={({ item, index }) => (
                 <Message
                   showEdit={showEditMessage === item._id}
@@ -180,11 +175,7 @@ function MessagesScreen({ route, navigation }) {
                   onEdit={handleOpenEditMessage}
                   onDelete={removeDeletedMessage}
                   message={item}
-                  isRepeatedAuthor={
-                    index > 0
-                      ? messages[index - 1].author._id === item.author._id
-                      : false
-                  }
+                  isRepeatedAuthor={messages[index + 1]?.author._id === item.author._id}
                 />
               )}
             />
