@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 
 import { authenticateUser } from '../../api/user'
 import { setStoreAuthToken } from '../../api/securestore'
-import { login } from '../../store/auth-slice'
+import { login, setIsLoading } from '../../store/auth-slice'
 import { useInput } from '../../hooks/use-input'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 
@@ -41,10 +41,12 @@ function LoginForm() {
       password: passwordInput,
     }
     try {
+      dispatch(setIsLoading(true))
       const token = await authenticateUser(userData)
       await setStoreAuthToken(token)
       dispatch(login(token))
     } catch (error) {
+      dispatch(setIsLoading(false))
       handleLoginError(error)
     }
   }

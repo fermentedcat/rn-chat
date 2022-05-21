@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 import colors from '../styles/colors'
 import theme from '../styles/theme'
@@ -15,9 +16,12 @@ import {
 } from 'react-native'
 import RegisterForm from '../components/forms/RegisterForm'
 import Header from '../components/Header'
+import Spinner from '../components/Spinner'
 import CustomButton from '../components/CustomButton'
 
 function RegisterScreen({ navigation }) {
+  const { isLoading } = useSelector((state) => state.auth)
+
   const handleGoBack = () => {
     navigation.goBack()
   }
@@ -34,15 +38,20 @@ function RegisterScreen({ navigation }) {
           style={styles.formWrapper}
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
-          <RegisterForm />
-        <View style={styles.login}>
-          <Text style={styles.loginText}>Already registered?</Text>
-          <CustomButton
-            title="Login"
-            bgColor={colors.primary}
-            onPress={handleGoToLogin}
-          />
-        </View>
+          {isLoading 
+          ? <Spinner />
+          : <>
+              <RegisterForm />
+              <View style={styles.login}>
+                <Text style={styles.loginText}>Already registered?</Text>
+                <CustomButton
+                  title="Login"
+                  bgColor={colors.primary}
+                  onPress={handleGoToLogin}
+                />
+              </View>
+            </>
+          }
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>

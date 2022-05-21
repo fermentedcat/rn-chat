@@ -5,7 +5,7 @@ import { addNewUser, getUserByUsername } from '../../api/user'
 import { setStoreAuthToken } from '../../api/securestore'
 import { useInput } from '../../hooks/use-input'
 import { useErrorHandler } from '../../hooks/use-error-handler'
-import { login } from '../../store/auth-slice'
+import { login, setIsLoading } from '../../store/auth-slice'
 
 import {
   validateEmail,
@@ -89,10 +89,12 @@ function RegisterForm() {
       password: passwordInput.value,
     }
     try {
+      dispatch(setIsLoading(true))
       const token = await addNewUser(userData)
       await setStoreAuthToken(token)
       dispatch(login(token))
     } catch (error) {
+      dispatch(setIsLoading(false))
       alertError()
     }
   }
