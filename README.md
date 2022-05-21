@@ -7,6 +7,9 @@ In this project I wanted to explore React Native, to look into the differences f
 ## Deployment
 Expo preview: [Snick Snack](https://expo.dev/@fermentedcat/snick-snack)
 
+![Snick Snack Expo preview QR Code](./assets/expo-snick-snack-preview.svg)
+<img src="./assets/expo-snick-snack-preview.svg">
+
 
 ## Key features
 - Live streamed message updates with Server Sent Events (SSE)
@@ -56,4 +59,6 @@ Connected to a Node.js server for authentication and data handling: https://gith
 - User avatars
 - Color themes
 - Give nicknames to other chat members
+- Support images in chat
+- Notification settings
 
