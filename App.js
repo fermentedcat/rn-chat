@@ -18,6 +18,7 @@ import InviteScreen from './app/screens/InviteScreen'
 const Stack = createNativeStackNavigator()
 
 export default function App() {
+  //TODO: Remove Home screen, set protected routes based on isAuthenticated
   return (
     <Provider store={store}>
       <NavigationContainer>

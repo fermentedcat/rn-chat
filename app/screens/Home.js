@@ -7,6 +7,7 @@ import { authenticateToken } from '../store/auth-slice'
 import { View } from 'react-native'
 
 function Home({ navigation }) {
+  //TODO: Make into an auth-hook instead to use in Welcome screen
   const { isAuthenticated, isLoading } = useSelector((state) => state.auth)
   const [checkedToken, setCheckedToken] = useState(false)
   const dispatch = useDispatch()
