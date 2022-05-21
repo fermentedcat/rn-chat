@@ -35,10 +35,14 @@ const authSlice = createSlice({
       state.userId = userId
       state.role = role
       state.username = username
+      state.isLoading = false
     },
     logout(state, action) {
       state.isAuthenticated = false
     },
+    setIsLoading(state, action) {
+      state.isLoading = action.payload
+    }
   },
   extraReducers: {
     [authenticateToken.fulfilled]: (state, { meta, payload }) => {
@@ -67,6 +71,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { login, logout } = authSlice.actions
+export const { login, logout, setIsLoading } = authSlice.actions
 
 export default authSlice.reducer
