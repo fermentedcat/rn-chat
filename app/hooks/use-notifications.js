@@ -16,6 +16,8 @@ export const useNotifications = (onOpen) => {
   const notificationListener = useRef()
   const responseListener = useRef()
 
+  // console.log(notification)
+
   const registerForPushNotificationsAsync = async () => {
     let token
     if (Constants.isDevice) {

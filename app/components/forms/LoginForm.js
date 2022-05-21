@@ -69,6 +69,7 @@ function LoginForm() {
           autoCapitalize="none"
         />
         {emailHasError && (
+          //TODO: make error text component
           <View style={styles.errorMessageBox}>
             <Text style={[styles.text, styles.errorText]}>
               Please provide a valid email address.

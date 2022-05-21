@@ -20,6 +20,7 @@ function FormInput({ input, title, validationError, apiError, type }) {
         keyboardType={type === 'email' ? 'email-address' : 'default'}
       />
       {input.hasError && (
+        //TODO: make error text component
         <View style={styles.errorMessageBox}>
           <Text style={[styles.text, styles.errorText]}>
             {validationError}

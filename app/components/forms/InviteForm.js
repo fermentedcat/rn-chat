@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TextInput, FlatList } from 'react-native'
 import { useSelector } from 'react-redux'
 
 import { searchAllByUsername } from '../../api/user'
-import { addChatSubscriptions, fetchChatSubscriptions } from '../../api/chat'
+import { addChatSubscriptions, getChatSubscriptions } from '../../api/chat'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 import { useInput } from '../../hooks/use-input'
 import { validateString } from '../../utils/validators'
@@ -65,7 +65,7 @@ function InviteForm({ chatId, onClose }) {
       const alertBody = [
         'Error',
         errorMessage,
-        [{ text: 'Ok', style: 'cancel' }]
+        [{ text: 'Ok', style: 'cancel' }],
       ]
       handleError(error, alertBody)
     }
@@ -90,7 +90,7 @@ function InviteForm({ chatId, onClose }) {
 
   const fetchSubscriptions = async () => {
     try {
-      const data = await fetchChatSubscriptions(chatId, token)
+      const data = await getChatSubscriptions(chatId, token)
       setSubscriptions(data)
     } catch (error) {
       handleError(error)
@@ -130,6 +130,7 @@ function InviteForm({ chatId, onClose }) {
           placeholder="Search users..."
         />
         {error.message && (
+          //TODO: make error text component
           <Text style={[styles.text, styles[error.type]]}>{error.message}</Text>
         )}
       </View>
