@@ -3,6 +3,9 @@ import { useFocusEffect } from '@react-navigation/native'
 import { useSelector } from 'react-redux'
 
 import { addNewChat, deleteChat, getChatById, updateChat } from '../../api/chat'
+import { useInput } from '../../hooks/use-input'
+import { useErrorHandler } from '../../hooks/use-error-handler'
+import { validateString } from '../../utils/validators'
 import colors from '../../styles/colors'
 import {
   formWrapper,
@@ -10,13 +13,10 @@ import {
   subHeadingText,
   textInput,
 } from '../../styles/common'
-import { useInput } from '../../hooks/use-input'
-import { useErrorHandler } from '../../hooks/use-error-handler'
-import { validateString } from '../../utils/validators'
 
 import { Text, TextInput, View, StyleSheet, Switch, Alert } from 'react-native'
-import CustomButton from '../CustomButton'
-import IconButton from '../IconButton'
+import Button from '../buttons/Button'
+import IconButton from '../buttons/IconButton'
 
 function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
   const [chat, setChat] = useState(null)
@@ -38,25 +38,29 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
     setIsPrivate(!isPrivate)
   }
 
-  const handleDelete = () => {
+  const handlePressDelete = () => {
     Alert.alert('Delete chat', 'Are you sure?', [
-      {
-        text: 'Yes',
-        onPress: async () => {
-          try {
-            await deleteChat(chatId, token)
-            onDelete()
-          } catch (error) {
-            const errorMessage = error.response?.status === 500 ? 'You are not authorized to delete this chat.' : 'Unable to delete chat'
-            const alertBody = ['Error', errorMessage, [
-              { text: 'Ok', style: 'cancel' }
-            ]]
-            handleError(error, alertBody)
-          }
-        },
-      },
-      { text: 'No', style: 'cancel' },
+      { text: 'Yes', onPress:  handleDeleteChat },
+      { text: 'No', style: 'cancel' }
     ])
+  }
+
+  const handleDeleteChat = async () => {
+    try {
+      await deleteChat(chatId, token)
+      onDelete()
+    } catch (error) {
+      const errorMessage =
+        error.response?.status === 500
+          ? 'You are not authorized to delete this chat.'
+          : 'Unable to delete chat'
+      const alertBody = [
+        'Error',
+        errorMessage,
+        [{ text: 'Ok', style: 'cancel' }],
+      ]
+      handleError(error, alertBody)
+    }
   }
 
   const handleSubmitChat = async () => {
@@ -118,7 +122,7 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
           <IconButton
             name="trash-outline"
             bgColor={colors.transparent}
-            onPress={handleDelete}
+            onPress={handlePressDelete}
           />
         </View>
       )}
@@ -165,16 +169,12 @@ function ChatForm({ chatId, onSubmit, onClose, onDelete }) {
         </Text>
       </View>
       <View style={styles.buttonGroup}>
-        <CustomButton
+        <Button
           title={!chatId ? 'Create chat' : 'Save'}
           onPress={handleSubmitChat}
           bgColor={colors.submit}
         />
-        <CustomButton
-          title="Cancel"
-          onPress={onClose}
-          bgColor={colors.cancel}
-        />
+        <Button title="Cancel" onPress={onClose} bgColor={colors.cancel} />
       </View>
     </View>
   )
