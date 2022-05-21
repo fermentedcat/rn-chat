@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import * as SecureStore from 'expo-secure-store'
 
-import { callPost } from '../../api/api'
-import { login } from '../../store/auth-slice'
+import { authenticateUser } from '../../api/user'
+import { setStoreAuthToken } from '../../api/securestore'
+import { login, setIsLoading } from '../../store/auth-slice'
 import { useInput } from '../../hooks/use-input'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 
@@ -12,9 +12,9 @@ import colors from '../../styles/colors'
 import { subHeadingText, textInput } from '../../styles/common'
 
 import { TextInput, StyleSheet, View, Text } from 'react-native'
-import CustomButton from '../CustomButton'
+import Button from '../buttons/Button'
 
-function LoginForm(props) {
+function LoginForm() {
   const {
     value: emailInput,
     isValid: emailIsValid,
@@ -41,11 +41,12 @@ function LoginForm(props) {
       password: passwordInput,
     }
     try {
-      const response = await callPost(userData, 'user/login')
-      const token = response.data
-      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
+      dispatch(setIsLoading(true))
+      const token = await authenticateUser(userData)
+      await setStoreAuthToken(token)
       dispatch(login(token))
     } catch (error) {
+      dispatch(setIsLoading(false))
       handleLoginError(error)
     }
   }
@@ -68,6 +69,7 @@ function LoginForm(props) {
           autoCapitalize="none"
         />
         {emailHasError && (
+          //TODO: make error text component
           <View style={styles.errorMessageBox}>
             <Text style={[styles.text, styles.errorText]}>
               Please provide a valid email address.
@@ -83,7 +85,7 @@ function LoginForm(props) {
           placeholder="Password"
         />
       </View>
-      <CustomButton
+      <Button
         title="Login"
         bgColor={colors.submit}
         disabled={!formIsValid}

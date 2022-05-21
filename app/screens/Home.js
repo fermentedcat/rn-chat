@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import * as SecureStore from 'expo-secure-store'
-
 import { useSelector, useDispatch } from 'react-redux'
+
+import { getStoreAuthToken } from '../api/securestore'
 import { authenticateToken } from '../store/auth-slice'
 
 import { View } from 'react-native'
 
 function Home({ navigation }) {
+  //TODO: Make into an auth-hook instead to use in Welcome screen
   const { isAuthenticated, isLoading } = useSelector((state) => state.auth)
   const [checkedToken, setCheckedToken] = useState(false)
   const dispatch = useDispatch()
 
   const getToken = async () => {
-    const token = await SecureStore.getItemAsync('SNICK_SNACK_TOKEN')
+    const token = await getStoreAuthToken()
     if (token) {
       dispatch(authenticateToken(token))
     }

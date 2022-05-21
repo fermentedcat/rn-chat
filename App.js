@@ -12,11 +12,13 @@ import LoginScreen from './app/screens/LoginScreen'
 import ChatsScreen from './app/screens/ChatsScreen'
 import MessagesScreen from './app/screens/MessagesScreen'
 import Home from './app/screens/Home'
-import EditScreen from './app/screens/EditScreen'
+import EditChatScreen from './app/screens/EditChatScreen'
+import InviteScreen from './app/screens/InviteScreen'
 
 const Stack = createNativeStackNavigator()
 
 export default function App() {
+  //TODO: Remove Home screen, set protected routes based on isAuthenticated
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -65,7 +67,14 @@ export default function App() {
           />
           <Stack.Screen
             name="Edit"
-            component={EditScreen}
+            component={EditChatScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Invite"
+            component={InviteScreen}
             options={{
               headerShown: false,
             }}

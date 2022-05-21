@@ -2,15 +2,18 @@ import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFocusEffect } from '@react-navigation/native'
 
-import { callGet, callPost } from '../api/api'
 import { Sse } from '../api/sse'
+import {
+  addNewChatMessage,
+  getChatMessages,
+  updateChatMessage,
+} from '../api/message'
 import { useErrorHandler } from '../hooks/use-error-handler'
 
 import colors from '../styles/colors'
 import {
   SafeAreaView,
   StyleSheet,
-  Text,
   FlatList,
   StatusBar,
   Platform,
@@ -18,13 +21,13 @@ import {
   Pressable,
 } from 'react-native'
 
-import Header from '../components/Header'
+import Header from '../components/layout/Header'
 import ActionsBar from '../components/ActionsBar'
-import IconButton from '../components/IconButton'
+import IconButton from '../components/buttons/IconButton'
 import Message from '../components/Message'
-import MessageInput from '../components/MessageInput'
+import MessageInput from '../components/inputs/MessageInput'
 import Spinner from '../components/Spinner'
-import ChatMenu from '../components/ChatMenu'
+import ChatMenu from '../components/menus/ChatMenu'
 
 function MessagesScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -33,7 +36,6 @@ function MessagesScreen({ route, navigation }) {
   const [messages, setMessages] = useState([])
   const [editMessage, setEditMessage] = useState({})
   const { chatId, chatName } = route.params
-  const endpoint = `chat/${chatId}/message`
   const token = useSelector((state) => state.auth.token)
   const { handleError } = useErrorHandler()
 
@@ -70,12 +72,12 @@ function MessagesScreen({ route, navigation }) {
   const handleSendMessage = async (message) => {
     try {
       if (editMessage._id) {
-        const response = await callPost(
+        const updated = await updateChatMessage(
           message,
-          `chat/${chatId}/message/${editMessage._id}`,
+          chatId,
+          editMessage._id,
           token
         )
-        const updated = response.data
         setMessages((prevState) => {
           return prevState.map((message) => {
             if (message._id === updated._id) return updated
@@ -85,17 +87,16 @@ function MessagesScreen({ route, navigation }) {
         setEditMessage({})
         setShowEditMessage(false)
       } else {
-        const response = await callPost(message, endpoint, token)
-        const newMessage = response.data
-        setMessages((prevState) => {
-          return [...prevState, newMessage]
-        })
+        const newMessage = await addNewChatMessage(message, chatId, token)
+        addNewMessage(newMessage)
       }
       return true
     } catch (error) {
-      const alertBody = ['Could not send message', 'An error occurred sending your message. Please reload the app and try again.', [
-        { text: 'Ok', style: 'cancel' }
-      ]]
+      const alertBody = [
+        'Could not send message',
+        'An error occurred sending your message. Please reload the app and try again.',
+        [{ text: 'Ok', style: 'cancel' }],
+      ]
       handleError(error, alertBody)
       return false
     }
@@ -103,13 +104,14 @@ function MessagesScreen({ route, navigation }) {
 
   const fetchMessages = async () => {
     try {
-      const response = await callGet(endpoint, token)
-      const data = response.data
-      setMessages(data)
+      const data = await getChatMessages(chatId, token)
+      setMessages(data.reverse())
     } catch (error) {
-      const alertBody = ['Failed to fetch messages', 'An error occurred fetching your messages. Please exit the chat and try again.', [
-        { text: 'Ok', style: 'cancel' }
-      ]]
+      const alertBody = [
+        'Failed to fetch messages',
+        'An error occurred fetching your messages. Please exit the chat and try again.',
+        [{ text: 'Ok', style: 'cancel' }],
+      ]
       handleError(error, alertBody)
     } finally {
       setIsLoading(false)
@@ -118,7 +120,7 @@ function MessagesScreen({ route, navigation }) {
 
   const addNewMessage = (newMessage) => {
     setMessages((prevState) => {
-      return [...prevState, newMessage]
+      return [newMessage, ...prevState]
     })
   }
 
@@ -166,9 +168,6 @@ function MessagesScreen({ route, navigation }) {
               keyExtractor={(item) => item._id}
               inverted
               style={styles.messageList}
-              contentContainerStyle={{
-                flexDirection: 'column-reverse',
-              }}
               renderItem={({ item, index }) => (
                 <Message
                   showEdit={showEditMessage === item._id}
@@ -176,11 +175,7 @@ function MessagesScreen({ route, navigation }) {
                   onEdit={handleOpenEditMessage}
                   onDelete={removeDeletedMessage}
                   message={item}
-                  isRepeatedAuthor={
-                    index > 0
-                      ? messages[index - 1].author._id === item.author._id
-                      : false
-                  }
+                  isRepeatedAuthor={messages[index + 1]?.author._id === item.author._id}
                 />
               )}
             />

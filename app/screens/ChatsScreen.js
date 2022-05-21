@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
-import * as SecureStore from 'expo-secure-store';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native'
 
-import { callGet, callPost } from '../api/api'
+import { getStorePushToken, setStorePushToken } from '../api/securestore'
+import { getUserSubscriptions, setUserPushToken } from '../api/user'
+import { useNotifications } from '../hooks/use-notifications'
+import { useErrorHandler } from '../hooks/use-error-handler'
 import colors from '../styles/colors'
 
 import {
@@ -17,15 +19,13 @@ import {
   View,
 } from 'react-native'
 
-import ChatButton from '../components/ChatButton'
+import ChatButton from '../components/buttons/ChatButton'
 import ActionsBar from '../components/ActionsBar'
-import IconButton from '../components/IconButton'
-import Header from '../components/Header'
+import IconButton from '../components/buttons/IconButton'
+import Header from '../components/layout/Header'
 import ChatForm from '../components/forms/ChatForm'
-import CustomModal from '../components/CustomModal'
-import { useNotifications } from '../hooks/use-notifications';
-import MainMenu from '../components/MainMenu';
-import { useErrorHandler } from '../hooks/use-error-handler';
+import Modal from '../components/layout/Modal'
+import MainMenu from '../components/menus/MainMenu'
 
 function ChatsScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -33,17 +33,17 @@ function ChatsScreen({ navigation }) {
   const [showMenu, setShowMenu] = useState(false)
   const [subscriptions, setSubscriptions] = useState(null)
   const { userId, token } = useSelector((state) => state.auth)
-  
+
   const navigateToChat = (chatId, chatName) => {
     navigation.navigate('Messages', { chatId, chatName })
   }
   const { expoPushToken, cleanup } = useNotifications(navigateToChat)
   const { handleError } = useErrorHandler()
-  
+
   const toggleModal = () => {
     setShowModal(!showModal)
   }
-  
+
   const handleChatAdded = (newChat) => {
     setSubscriptions((prevState) => {
       return [...prevState, { chat: newChat }]
@@ -53,8 +53,8 @@ function ChatsScreen({ navigation }) {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await callGet(`user/${userId}/subscription`, token)
-      setSubscriptions(response.data)
+      const data = await getUserSubscriptions(userId, token)
+      setSubscriptions(data)
     } catch (error) {
       handleError(error)
     } finally {
@@ -63,15 +63,17 @@ function ChatsScreen({ navigation }) {
   }
 
   const setPushToken = async () => {
-    const storedPushToken = await SecureStore.getItemAsync('SNICK_SNACK_PUSH_TOKEN')
+    const storedPushToken = await getStorePushToken()
     if (storedPushToken !== expoPushToken) {
       try {
-        await SecureStore.setItemAsync('SNICK_SNACK_PUSH_TOKEN', expoPushToken)
-        await callPost({token: expoPushToken}, 'user/pushToken', token)
+        await setStorePushToken(expoPushToken)
+        await setUserPushToken(expoPushToken, token)
       } catch (error) {
-        const alertBody = ['Push notification error', 'An error occurred setting your push notifications.', [
-          { text: 'Ok', style: 'cancel' }
-        ]]
+        const alertBody = [
+          'Push notification error',
+          'An error occurred setting your push notifications.',
+          [{ text: 'Ok', style: 'cancel' }],
+        ]
         handleError(error, alertBody)
       }
     }
@@ -82,7 +84,7 @@ function ChatsScreen({ navigation }) {
       fetchSubscriptions()
     }, [])
   )
-  
+
   useFocusEffect(
     useCallback(() => {
       if (expoPushToken?.length > 0) {
@@ -97,8 +99,16 @@ function ChatsScreen({ navigation }) {
       <SafeAreaView style={styles.container}>
         <Header title="Chats" logo bgColor={colors.success}>
           <ActionsBar>
-            <IconButton name="search" bgColor={colors.success} onPress={() => Alert.alert('Chat search not yet available...')}/>
-            <IconButton name="ellipsis-vertical" onPress={() => setShowMenu(true)} bgColor={colors.success}/>
+            <IconButton
+              name="search"
+              bgColor={colors.success}
+              onPress={() => Alert.alert('Chat search not yet available...')}
+            />
+            <IconButton
+              name="ellipsis-vertical"
+              onPress={() => setShowMenu(true)}
+              bgColor={colors.success}
+            />
             {showMenu && (
               <MainMenu
                 onClose={() => setShowMenu(false)}
@@ -123,9 +133,9 @@ function ChatsScreen({ navigation }) {
           />
         )}
       </SafeAreaView>
-      <CustomModal visible={showModal} onClose={toggleModal}>
+      <Modal visible={showModal} onClose={toggleModal}>
         <ChatForm onSubmit={handleChatAdded} onClose={toggleModal} />
-      </CustomModal>
+      </Modal>
     </View>
   )
 }

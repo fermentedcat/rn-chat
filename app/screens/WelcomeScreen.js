@@ -4,7 +4,7 @@ import colors from '../styles/colors'
 import { pageWrapper, headingText } from '../styles/common'
 
 import { Image, StyleSheet, View } from 'react-native'
-import CustomButton from '../components/CustomButton'
+import Button from '../components/buttons/Button'
 
 function WelcomeScreen({ navigation }) {
   const handleLogin = () => {
@@ -23,12 +23,8 @@ function WelcomeScreen({ navigation }) {
         />
       </View>
       <View style={{ width: '70%' }}>
-        <CustomButton
-          title="Login"
-          onPress={handleLogin}
-          bgColor={colors.submit}
-        />
-        <CustomButton
+        <Button title="Login" onPress={handleLogin} bgColor={colors.submit} />
+        <Button
           title="Register"
           onPress={handleRegister}
           bgColor={colors.danger}

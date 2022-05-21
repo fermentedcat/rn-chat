@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 
-import colors from '../../styles/colors'
-import { subHeadingText } from '../../styles/common'
+import colors from '../styles/colors'
+import { subHeadingText } from '../styles/common'
 
 import { Text, View, StyleSheet } from 'react-native'
 
@@ -50,8 +50,6 @@ const styles = StyleSheet.create({
   finished: {
     backgroundColor: colors.info,
     borderColor: colors.info,
-    // opacity: 0.5,
-    // color: colors.white,
   },
   current: {
     backgroundColor: colors.white,

@@ -2,7 +2,7 @@ import React from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import colors from '../styles/colors';
 
-function Spinner(props) {
+function Spinner() {
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" color={colors.primary} />

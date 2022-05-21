@@ -1,56 +1,55 @@
 import React from 'react'
-import * as SecureStore from 'expo-secure-store';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux'
 
-import { logout } from '../store/auth-slice'
-import colors from '../styles/colors'
-import { headingText, subHeadingText } from '../styles/common'
+import { deleteStoreAuthToken, deleteStorePushToken } from '../../api/securestore'
+import { logout } from '../../store/auth-slice'
+import colors from '../../styles/colors'
+import { headingText, subHeadingText } from '../../styles/common'
 
-import {
-  View,
-  StyleSheet,
-  Text,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native'
-import CustomModal from './CustomModal'
-import IconButton from './IconButton'
+import { View, StyleSheet, Text, SafeAreaView, StatusBar } from 'react-native'
+import Modal from '../layout/Modal'
+import IconButton from '../buttons/IconButton'
 
 function MainMenu({ onClose, onPressAdd }) {
   const dispatch = useDispatch()
-  const handleLogout = () => {
-    SecureStore.deleteItemAsync('SNICK_SNACK_TOKEN')
+  const handleLogout = async () => {
+    await deleteStoreAuthToken()
+    await deleteStorePushToken()
     dispatch(logout())
   }
-  
+
   const handlePressAdd = () => {
     onPressAdd()
     onClose()
   }
 
   return (
-    <CustomModal visible={true} onClose={onClose}>
+    <Modal visible={true} onClose={onClose}>
       <View style={styles.backdrop} />
       <View style={styles.closeButton}>
-          <IconButton name="close" onPress={onClose} bgColor={colors.danger}/>
+        <IconButton name="close" onPress={onClose} bgColor={colors.danger} />
       </View>
       <SafeAreaView style={styles.container}>
         <View style={styles.menu}>
-          <View
-            style={styles.menuItem}
-          >
+          <View style={styles.menuItem}>
             <Text style={[styles.text, styles.menuText]}>Add new chat</Text>
-            <IconButton name="chatbubbles-outline" onPress={handlePressAdd} bgColor={colors.primary}/>
+            <IconButton
+              name="chatbubbles-outline"
+              onPress={handlePressAdd}
+              bgColor={colors.primary}
+            />
           </View>
-          <View
-            style={styles.menuItem}
-          >
+          <View style={styles.menuItem}>
             <Text style={[styles.text, styles.menuText]}>Logout</Text>
-            <IconButton name="arrow-back-outline" onPress={handleLogout} bgColor={colors.primary}/>
+            <IconButton
+              name="arrow-back-outline"
+              onPress={handleLogout}
+              bgColor={colors.primary}
+            />
           </View>
         </View>
       </SafeAreaView>
-    </CustomModal>
+    </Modal>
   )
 }
 

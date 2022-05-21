@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { TextInput, StyleSheet, View, Text, Platform, Pressable } from 'react-native'
+import { TextInput, StyleSheet, View, Platform, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import colors from '../styles/colors'
-import theme from '../styles/theme'
+import colors from '../../styles/colors'
+import theme from '../../styles/theme'
 
 function MessageInput({ message, placeholder, onSubmit }) {
   const [userInput, setUserInput] = useState('')

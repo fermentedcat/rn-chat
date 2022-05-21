@@ -1,12 +1,17 @@
 import React from 'react'
 
-import theme from '../styles/theme'
+import theme from '../../styles/theme'
 
-import { KeyboardAvoidingView, Modal, Pressable, StyleSheet } from 'react-native'
+import {
+  KeyboardAvoidingView,
+  Modal as RNModal,
+  Pressable,
+  StyleSheet,
+} from 'react-native'
 
-function CustomModal({ visible, onClose, children }) {
+function Modal({ visible, onClose, children }) {
   return (
-    <Modal
+    <RNModal
       animationType="fade"
       transparent={true}
       visible={visible}
@@ -17,7 +22,7 @@ function CustomModal({ visible, onClose, children }) {
         <Pressable style={styles.overlay} onPress={onClose} />
         {children}
       </KeyboardAvoidingView>
-    </Modal>
+    </RNModal>
   )
 }
 
@@ -38,4 +43,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default CustomModal
+export default Modal

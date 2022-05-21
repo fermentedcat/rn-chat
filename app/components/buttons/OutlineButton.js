@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { Pressable, Text, View, StyleSheet, Platform } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
-import colors from '../styles/colors'
-import theme from '../styles/theme'
+import colors from '../../styles/colors'
+import theme from '../../styles/theme'
 
-function CustomOutlineButton({ title, onPress, disabled, outline, checked }) {
+function OutlineButton({ title, onPress, disabled, outline, checked }) {
   const [pressing, setPressing] = useState(false)
 
   const togglePressing = () => {
@@ -19,11 +19,16 @@ function CustomOutlineButton({ title, onPress, disabled, outline, checked }) {
         onPress={onPress}
         onPressIn={togglePressing}
         onPressOut={togglePressing}
-        style={[styles(outline, pressing).button, disabled && styles().disabled]}
+        style={[
+          styles(outline, pressing).button,
+          disabled && styles().disabled,
+        ]}
         android_ripple={{ color: colors.secondary }}
       >
         <Text style={styles(outline).buttonText}>{title}</Text>
-        {checked && <Ionicons style={styles().checked} name="checkmark-circle"/>}
+        {checked && (
+          <Ionicons style={styles().checked} name="checkmark-circle" />
+        )}
       </Pressable>
     </View>
   )
@@ -45,7 +50,10 @@ const styles = (outline, pressing) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: pressing && Platform.OS === 'ios' ? colors.secondaryExtraLight : colors.white,
+      backgroundColor:
+        pressing && Platform.OS === 'ios'
+          ? colors.secondaryExtraLight
+          : colors.white,
     },
     buttonText: {
       fontSize: theme.FONT_SIZE_LARGE,
@@ -61,8 +69,8 @@ const styles = (outline, pressing) =>
     checked: {
       fontSize: theme.FONT_SIZE_HEADING,
       color: colors.primary,
-      paddingRight: 5
-    }
+      paddingRight: 5,
+    },
   })
 
-export default CustomOutlineButton
+export default OutlineButton

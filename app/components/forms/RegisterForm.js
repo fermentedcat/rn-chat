@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import * as SecureStore from 'expo-secure-store'
 import { useDispatch } from 'react-redux'
 
-import { callGet, callPost } from '../../api/api'
+import { addNewUser, getUserByUsername } from '../../api/user'
+import { setStoreAuthToken } from '../../api/securestore'
 import { useInput } from '../../hooks/use-input'
 import { useErrorHandler } from '../../hooks/use-error-handler'
-import { login } from '../../store/auth-slice'
+import { login, setIsLoading } from '../../store/auth-slice'
 
 import {
   validateEmail,
@@ -17,9 +17,9 @@ import {
 import colors from '../../styles/colors'
 
 import { StyleSheet, View } from 'react-native'
-import CustomButton from '../CustomButton'
-import FormInput from './FormInput'
-import ProgressBar from './ProgressBar'
+import Button from '../buttons/Button'
+import FormInput from '../inputs/FormInput'
+import ProgressBar from '../ProgressBar'
 
 function RegisterForm() {
   const dispatch = useDispatch()
@@ -89,19 +89,19 @@ function RegisterForm() {
       password: passwordInput.value,
     }
     try {
-      const response = await callPost(userData, 'user')
-      const token = response.data
-      await SecureStore.setItemAsync('SNICK_SNACK_TOKEN', token)
+      dispatch(setIsLoading(true))
+      const token = await addNewUser(userData)
+      await setStoreAuthToken(token)
       dispatch(login(token))
     } catch (error) {
+      dispatch(setIsLoading(false))
       alertError()
     }
   }
 
   const validateUniqueUsername = async (username) => {
     try {
-      const response = await callGet(`user/search/${username}`)
-      const user = response.data
+      const user = await getUserByUsername(username)
       if (user) {
         setErrors({ ...errors, username: 'This username is taken.' })
       }
@@ -109,7 +109,7 @@ function RegisterForm() {
       alertError()
     }
   }
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (usernameInput.isValid) {
@@ -118,11 +118,11 @@ function RegisterForm() {
     }, 500)
 
     setErrors((prevState) => {
-      const temp = {...prevState}
+      const temp = { ...prevState }
       delete temp.username
       return temp
     })
-    
+
     return () => {
       clearTimeout(timer)
     }
@@ -163,14 +163,14 @@ function RegisterForm() {
         })}
       </View>
       {step < steps.length - 1 ? (
-        <CustomButton
+        <Button
           title="Next"
           bgColor={colors.info}
           disabled={!stepIsValid}
           onPress={() => setStep(step + 1)}
         />
       ) : (
-        <CustomButton
+        <Button
           title="Register"
           bgColor={colors.danger}
           disabled={!formIsValid}
@@ -178,7 +178,7 @@ function RegisterForm() {
         />
       )}
       {step > 0 && (
-        <CustomButton
+        <Button
           title="Back"
           bgColor={colors.secondary}
           onPress={() => setStep(step - 1)}
