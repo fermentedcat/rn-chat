@@ -7,8 +7,7 @@ In this project I wanted to explore React Native, to look into the differences f
 ## Deployment
 Expo preview: [Snick Snack](https://expo.dev/@fermentedcat/snick-snack)
 
-![Snick Snack Expo preview QR Code](./assets/expo-snick-snack-preview.svg)
-<img src="./assets/expo-snick-snack-preview.svg">
+<img src="./app/assets/expo-snick-snack-preview.svg">
 
 
 ## Key features
