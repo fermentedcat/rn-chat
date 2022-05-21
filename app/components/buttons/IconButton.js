@@ -1,9 +1,8 @@
 import React from 'react'
 
-import textColorByBg from '../utils/colors/textColorByBg'
-
-import colors from '../styles/colors'
-import theme from '../styles/theme'
+import textColorByBg from '../../utils/colors/textColorByBg'
+import colors from '../../styles/colors'
+import theme from '../../styles/theme'
 
 import { Ionicons } from '@expo/vector-icons'
 import { Pressable, StyleSheet } from 'react-native'

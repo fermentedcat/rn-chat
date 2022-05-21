@@ -9,7 +9,7 @@ import colors from '../styles/colors'
 import theme from '../styles/theme'
 
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
-import IconButton from './IconButton'
+import IconButton from './buttons/IconButton'
 
 function Message({
   message,

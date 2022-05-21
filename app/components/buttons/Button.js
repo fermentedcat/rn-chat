@@ -1,12 +1,12 @@
 import React from 'react'
 import { Pressable, Text, View, StyleSheet, Platform } from 'react-native'
 
-import getColorBrightness from '../utils/colors/getColorBrightness'
-import darkenHex from '../utils/colors/darkenHex'
-import colors from '../styles/colors'
-import theme from '../styles/theme'
+import getColorBrightness from '../../utils/colors/getColorBrightness'
+import darkenHex from '../../utils/colors/darkenHex'
+import colors from '../../styles/colors'
+import theme from '../../styles/theme'
 
-function CustomButton({ title, onPress, bgColor, disabled }) {
+function Button({ title, onPress, bgColor, disabled }) {
   const isLightBg = getColorBrightness(bgColor) > 180
   const textColor = disabled
     ? colors.secondaryMedium
@@ -63,4 +63,4 @@ const styles = (bgColor, textColor) =>
     },
   })
 
-export default CustomButton
+export default Button

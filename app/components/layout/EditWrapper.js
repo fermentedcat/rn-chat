@@ -1,7 +1,7 @@
 import React from 'react'
 
-import theme from '../styles/theme'
-import { pageWrapper } from '../styles/common'
+import theme from '../../styles/theme'
+import { pageWrapper } from '../../styles/common'
 
 import {
   KeyboardAvoidingView,

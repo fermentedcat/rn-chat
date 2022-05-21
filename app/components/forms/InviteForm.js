@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text, TextInput, FlatList } from 'react-native'
 import { useSelector } from 'react-redux'
 
+import { searchAllByUsername } from '../../api/user'
 import { addChatSubscriptions, fetchChatSubscriptions } from '../../api/chat'
 import { useErrorHandler } from '../../hooks/use-error-handler'
 import { useInput } from '../../hooks/use-input'
@@ -14,9 +15,8 @@ import {
   subHeadingText,
   textInput,
 } from '../../styles/common'
-import CustomButton from '../CustomButton'
-import CustomOutlineButton from '../CustomOutlineButton'
-import { searchAllByUsername } from '../../api/user'
+import Button from '../buttons/Button'
+import OutlineButton from '../buttons/OutlineButton'
 
 function InviteForm({ chatId, onClose }) {
   const token = useSelector((state) => state.auth.token)
@@ -58,10 +58,15 @@ function InviteForm({ chatId, onClose }) {
       await addChatSubscriptions(chatId, chosen, token)
       onClose()
     } catch (error) {
-      const errorMessage = error.response?.status === 500 ? 'You are not authorized to send invites.' : 'Could not send invites. Please reload and try again.'
-      const alertBody = ['Error', errorMessage, [
-        { text: 'Ok', style: 'cancel' }
-      ]]
+      const errorMessage =
+        error.response?.status === 500
+          ? 'You are not authorized to send invites.'
+          : 'Could not send invites. Please reload and try again.'
+      const alertBody = [
+        'Error',
+        errorMessage,
+        [{ text: 'Ok', style: 'cancel' }]
+      ]
       handleError(error, alertBody)
     }
   }
@@ -135,31 +140,23 @@ function InviteForm({ chatId, onClose }) {
         keyExtractor={(item) => item._id}
         style={styles.usersList}
         renderItem={({ item, index }) => (
-          <CustomOutlineButton
+          <OutlineButton
             title={item.username}
             onPress={() => toggleChooseUser(index)}
-            outline={
-              item.chosen
-                ? colors.primary
-                : colors.secondary
-            }
+            outline={item.chosen ? colors.primary : colors.secondary}
             checked={item.chosen}
           />
         )}
       />
       <View>
         {getChosenUsers().length > 0 && (
-          <CustomButton
+          <Button
             title={getChosenUsers().length > 1 ? 'Send invites' : 'Send invite'}
             onPress={handleSendInvites}
             bgColor={colors.primary}
           />
         )}
-        <CustomButton
-          title="Cancel"
-          onPress={onClose}
-          bgColor={colors.cancel}
-        />
+        <Button title="Cancel" onPress={onClose} bgColor={colors.cancel} />
       </View>
     </View>
   )

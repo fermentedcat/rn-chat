@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 
-import colors from '../../styles/colors'
-import { subHeadingText } from '../../styles/common'
+import colors from '../styles/colors'
+import { subHeadingText } from '../styles/common'
 
 import { Text, View, StyleSheet } from 'react-native'
 

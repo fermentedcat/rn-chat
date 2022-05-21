@@ -1,8 +1,8 @@
 import React from 'react'
 import { Text, Pressable, StyleSheet } from 'react-native'
 
-import colors from '../styles/colors'
-import theme from '../styles/theme'
+import colors from '../../styles/colors'
+import theme from '../../styles/theme'
 
 function ChatButton({chat, navigation, index}) {
   const handleOnPress = () => {

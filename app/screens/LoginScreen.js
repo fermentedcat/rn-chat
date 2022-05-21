@@ -14,8 +14,8 @@ import {
   Text,
 } from 'react-native'
 import LoginForm from '../components/forms/LoginForm'
-import Header from '../components/Header'
-import CustomButton from '../components/CustomButton'
+import Header from '../components/layout/Header'
+import Button from '../components/buttons/Button'
 import Spinner from '../components/Spinner'
 import theme from '../styles/theme'
 
@@ -32,28 +32,32 @@ function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.pageWrapper}>
-      <Header title="Login" backNav={handleGoBack} bgColor={theme.BACKGROUND_COLOR_LIGHT} />
+      <Header
+        title="Login"
+        backNav={handleGoBack}
+        bgColor={theme.BACKGROUND_COLOR_LIGHT}
+      />
       <View style={styles.contentWrapper}>
         <KeyboardAvoidingView
           style={styles.formWrapper}
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
-        <View style={styles.logoContainer}>
-          <Image
-            style={styles.logo}
-            source={require('../assets/snick-snack.png')}
-          />
-        </View>
-        {isLoading && <Spinner />}
-        <LoginForm />
-        <View style={styles.login}>
-          <Text style={styles.loginText}>No account?</Text>
-          <CustomButton
-            title="Register"
-            bgColor={colors.danger}
-            onPress={handleGoToRegister}
-          />
-        </View>
+          <View style={styles.logoContainer}>
+            <Image
+              style={styles.logo}
+              source={require('../assets/snick-snack.png')}
+            />
+          </View>
+          {isLoading && <Spinner />}
+          <LoginForm />
+          <View style={styles.login}>
+            <Text style={styles.loginText}>No account?</Text>
+            <Button
+              title="Register"
+              bgColor={colors.danger}
+              onPress={handleGoToRegister}
+            />
+          </View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
@@ -93,8 +97,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 120,
-    height: 120
-  }
+    height: 120,
+  },
 })
 
 export default LoginScreen

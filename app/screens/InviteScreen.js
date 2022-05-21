@@ -1,5 +1,5 @@
 import React from 'react'
-import EditWrapper from '../components/EditWrapper'
+import EditWrapper from '../components/layout/EditWrapper'
 import InviteForm from '../components/forms/InviteForm'
 
 function InviteScreen({ route, navigation }) {

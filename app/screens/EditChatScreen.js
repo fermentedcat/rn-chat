@@ -1,7 +1,7 @@
 import React from 'react'
 
 import ChatForm from '../components/forms/ChatForm'
-import EditWrapper from '../components/EditWrapper'
+import EditWrapper from '../components/layout/EditWrapper'
 
 function EditChatScreen({ route, navigation }) {
   const { chatId } = route.params

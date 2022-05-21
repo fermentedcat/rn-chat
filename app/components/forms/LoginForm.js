@@ -12,7 +12,7 @@ import colors from '../../styles/colors'
 import { subHeadingText, textInput } from '../../styles/common'
 
 import { TextInput, StyleSheet, View, Text } from 'react-native'
-import CustomButton from '../CustomButton'
+import Button from '../buttons/Button'
 
 function LoginForm() {
   const {
@@ -84,7 +84,7 @@ function LoginForm() {
           placeholder="Password"
         />
       </View>
-      <CustomButton
+      <Button
         title="Login"
         bgColor={colors.submit}
         disabled={!formIsValid}

@@ -1,12 +1,12 @@
 import React from 'react'
 
-import textColorByBg from '../utils/colors/textColorByBg'
+import textColorByBg from '../../utils/colors/textColorByBg'
 
-import theme from '../styles/theme'
-import colors from '../styles/colors'
+import theme from '../../styles/theme'
+import colors from '../../styles/colors'
 
 import { Image, Text, View, StyleSheet } from 'react-native'
-import IconButton from './IconButton'
+import IconButton from '../buttons/IconButton'
 
 function Header({ title, logo, backNav, bgColor, children: actions }) {
   return (
@@ -14,7 +14,7 @@ function Header({ title, logo, backNav, bgColor, children: actions }) {
       {logo ? (
         <View style={styles().logoWrapper}>
           <Image
-            source={require('../assets/snick-snack.png')}
+            source={require('../../assets/snick-snack.png')}
             style={styles().logo}
           />
         </View>

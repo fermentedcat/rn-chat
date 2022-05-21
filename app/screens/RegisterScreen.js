@@ -15,9 +15,9 @@ import {
   Platform,
 } from 'react-native'
 import RegisterForm from '../components/forms/RegisterForm'
-import Header from '../components/Header'
+import Header from '../components/layout/Header'
 import Spinner from '../components/Spinner'
-import CustomButton from '../components/CustomButton'
+import Button from '../components/buttons/Button'
 
 function RegisterScreen({ navigation }) {
   const { isLoading } = useSelector((state) => state.auth)
@@ -32,22 +32,26 @@ function RegisterScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.pageWrapper}>
-      <Header title="Register" backNav={handleGoBack} bgColor={theme.BACKGROUND_COLOR_LIGHT} />
+      <Header
+        title="Register"
+        backNav={handleGoBack}
+        bgColor={theme.BACKGROUND_COLOR_LIGHT}
+      />
       <View style={styles.contentWrapper}>
         <KeyboardAvoidingView
           style={styles.formWrapper}
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
-        {isLoading && <Spinner />}
-        <RegisterForm />
-        <View style={styles.login}>
-          <Text style={styles.loginText}>Already registered?</Text>
-          <CustomButton
-            title="Login"
-            bgColor={colors.primary}
-            onPress={handleGoToLogin}
-          />
-        </View>
+          {isLoading && <Spinner />}
+          <RegisterForm />
+          <View style={styles.login}>
+            <Text style={styles.loginText}>Already registered?</Text>
+            <Button
+              title="Login"
+              bgColor={colors.primary}
+              onPress={handleGoToLogin}
+            />
+          </View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
