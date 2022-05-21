@@ -38,20 +38,16 @@ function RegisterScreen({ navigation }) {
           style={styles.formWrapper}
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
-          {isLoading 
-          ? <Spinner />
-          : <>
-              <RegisterForm />
-              <View style={styles.login}>
-                <Text style={styles.loginText}>Already registered?</Text>
-                <CustomButton
-                  title="Login"
-                  bgColor={colors.primary}
-                  onPress={handleGoToLogin}
-                />
-              </View>
-            </>
-          }
+        {isLoading && <Spinner />}
+        <RegisterForm />
+        <View style={styles.login}>
+          <Text style={styles.loginText}>Already registered?</Text>
+          <CustomButton
+            title="Login"
+            bgColor={colors.primary}
+            onPress={handleGoToLogin}
+          />
+        </View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>

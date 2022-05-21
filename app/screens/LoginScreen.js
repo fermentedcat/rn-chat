@@ -38,26 +38,22 @@ function LoginScreen({ navigation }) {
           style={styles.formWrapper}
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
-          {isLoading 
-          ? <Spinner />
-          : <>
-              <View style={styles.logoContainer}>
-                <Image
-                  style={styles.logo}
-                  source={require('../assets/snick-snack.png')}
-                />
-              </View>
-              <LoginForm />
-              <View style={styles.login}>
-                <Text style={styles.loginText}>No account?</Text>
-                <CustomButton
-                  title="Register"
-                  bgColor={colors.danger}
-                  onPress={handleGoToRegister}
-                />
-              </View>
-            </>
-          }
+        <View style={styles.logoContainer}>
+          <Image
+            style={styles.logo}
+            source={require('../assets/snick-snack.png')}
+          />
+        </View>
+        {isLoading && <Spinner />}
+        <LoginForm />
+        <View style={styles.login}>
+          <Text style={styles.loginText}>No account?</Text>
+          <CustomButton
+            title="Register"
+            bgColor={colors.danger}
+            onPress={handleGoToRegister}
+          />
+        </View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
