@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 import colors from '../styles/colors'
 import { pageWrapper, subHeadingText } from '../styles/common'
@@ -15,9 +16,11 @@ import {
 import LoginForm from '../components/forms/LoginForm'
 import Header from '../components/Header'
 import CustomButton from '../components/CustomButton'
+import Spinner from '../components/Spinner'
 import theme from '../styles/theme'
 
 function LoginScreen({ navigation }) {
+  const { isLoading } = useSelector((state) => state.auth)
 
   const handleGoBack = () => {
     navigation.goBack()
@@ -35,21 +38,22 @@ function LoginScreen({ navigation }) {
           style={styles.formWrapper}
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
-          <View style={styles.logoContainer}>
-            <Image
-              style={styles.logo}
-              source={require('../assets/snick-snack.png')}
-            />
-          </View>
-          <LoginForm />
-          <View style={styles.login}>
-            <Text style={styles.loginText}>No account?</Text>
-            <CustomButton
-              title="Register"
-              bgColor={colors.danger}
-              onPress={handleGoToRegister}
-            />
-          </View>
+        <View style={styles.logoContainer}>
+          <Image
+            style={styles.logo}
+            source={require('../assets/snick-snack.png')}
+          />
+        </View>
+        {isLoading && <Spinner />}
+        <LoginForm />
+        <View style={styles.login}>
+          <Text style={styles.loginText}>No account?</Text>
+          <CustomButton
+            title="Register"
+            bgColor={colors.danger}
+            onPress={handleGoToRegister}
+          />
+        </View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
