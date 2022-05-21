@@ -5,7 +5,7 @@ Chat app written in React Native using [Expo CLI](https://expo.dev/)
 In this project I wanted to explore React Native, to look into the differences from creating a similar app in React. 
 
 ## Deployment
-Expo preview: [Snick Snack](exp://exp.host/@fermentedcat/snick-snack)
+Expo preview: [Snick Snack](https://expo.dev/@fermentedcat/snick-snack)
 
 
 ## Key features
