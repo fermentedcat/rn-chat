@@ -22,7 +22,7 @@ import {
 } from 'react-native'
 
 import Header from '../components/layout/Header'
-import ActionsBar from '../components/ActionsBar'
+import ActionsBar from '../components/layout/ActionsBar'
 import IconButton from '../components/buttons/IconButton'
 import Message from '../components/Message'
 import MessageInput from '../components/inputs/MessageInput'

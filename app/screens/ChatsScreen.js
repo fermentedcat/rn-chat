@@ -20,7 +20,7 @@ import {
 } from 'react-native'
 
 import ChatButton from '../components/buttons/ChatButton'
-import ActionsBar from '../components/ActionsBar'
+import ActionsBar from '../components/layout/ActionsBar'
 import IconButton from '../components/buttons/IconButton'
 import Header from '../components/layout/Header'
 import ChatForm from '../components/forms/ChatForm'

@@ -12,11 +12,9 @@ Notifications.setNotificationHandler({
 
 export const useNotifications = (onOpen) => {
   const [expoPushToken, setExpoPushToken] = useState('')
-  const [notification, setNotification] = useState(false)
+  // const [notification, setNotification] = useState(false)
   const notificationListener = useRef()
   const responseListener = useRef()
-
-  // console.log(notification)
 
   const registerForPushNotificationsAsync = async () => {
     let token
@@ -59,7 +57,7 @@ export const useNotifications = (onOpen) => {
     // fired whenever a notification is received while the app is foregrounded
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification)
+        // setNotification(notification)
       })
 
     // fires when the user taps on a notification (works when app is foregrounded, backgrounded, or killed)
